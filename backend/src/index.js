@@ -1,7 +1,7 @@
 import express from "express";
 
 const app = express();
-port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;
 
 app.get("/health", (req, res) => {
   res.send("Server is running");
