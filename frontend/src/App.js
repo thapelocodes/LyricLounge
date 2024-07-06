@@ -8,12 +8,12 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { PrivateRoute } from "./routes/protectedRoutes";
 
-export function App() {
+export default function App() {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" Component={<Home />} />
+          <Route path="/" Component={Home} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<PrivateRoute />}></Route>
