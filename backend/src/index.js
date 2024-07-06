@@ -1,6 +1,6 @@
-import express from "express";
-import { WebSocketServer } from "ws";
-import http from "http";
+const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -11,7 +11,7 @@ app.get("/health", (req, res) => {
 });
 
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws) => {
   console.log("New client connected");
