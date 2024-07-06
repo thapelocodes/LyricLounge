@@ -11,9 +11,14 @@ const generateToken = (id) => {
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+    const emailExists = await User.findOne({ email });
+    const usernameExists = await User.findOne({ username });
+    if (emailExists) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    if (usernameExists) {
+      return res.status(400).json({ message: "Username already exists" });
     }
 
     const user = await User.create({ username, email, password });
