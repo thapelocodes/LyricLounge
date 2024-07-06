@@ -7,6 +7,7 @@ export const Login = () => {
     password: "",
   });
 
+  const [error, setError] = useState("");
   const { login, password } = formData;
 
   const onChange = (e) => {
@@ -19,7 +20,7 @@ export const Login = () => {
       const res = await axios.post("/api/users/login", formData);
       console.log(res.data);
     } catch (err) {
-      console.error(err);
+      setError(err.response.data.message || "An error occurred");
     }
   };
 
@@ -41,6 +42,7 @@ export const Login = () => {
         placeholder="Password"
         required
       />
+      {error && <p>{error}</p>}
       <button type="submit">Login</button>
     </form>
   );

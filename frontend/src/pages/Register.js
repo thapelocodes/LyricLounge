@@ -6,9 +6,11 @@ export const Register = () => {
     username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const { username, email, password } = formData;
+  const [error, setError] = useState("");
+  const { username, email, password, confirmPassword } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,11 +18,15 @@ export const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
     try {
       const res = await axios.post("/api/users/register", formData);
       console.log(res.data);
     } catch (err) {
-      console.error(err);
+      setError(err.response.data.message || "An error occurred");
     }
   };
 
@@ -50,6 +56,7 @@ export const Register = () => {
         placeholder="Password"
         required
       />
+      {error && <p>{error}</p>}
       <button type="submit">Register</button>
     </form>
   );
