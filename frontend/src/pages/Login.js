@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../features/auth/authSlice";
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -7,7 +8,8 @@ export const Login = () => {
     password: "",
   });
 
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
   const { login, password } = formData;
 
   const onChange = (e) => {
@@ -16,12 +18,7 @@ export const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post("/api/users/login", formData);
-      console.log(res.data);
-    } catch (err) {
-      setError(err.response.data.message || "An error occurred");
-    }
+    dispatch(loginUser(formData));
   };
 
   return (
@@ -43,7 +40,9 @@ export const Login = () => {
         required
       />
       {error && <p>{error}</p>}
-      <button type="submit">Login</button>
+      <button type="submit" disabled={loading}>
+        Login
+      </button>
     </form>
   );
 };

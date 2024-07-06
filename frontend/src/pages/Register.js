@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../features/auth/authSlice";
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,8 @@ export const Register = () => {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
   const { username, email, password, confirmPassword } = formData;
 
   const onChange = (e) => {
@@ -19,15 +21,10 @@ export const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      console.error("Passwords do not match");
       return;
     }
-    try {
-      const res = await axios.post("/api/users/register", formData);
-      console.log(res.data);
-    } catch (err) {
-      setError(err.response.data.message || "An error occurred");
-    }
+    dispatch(registerUser(formData));
   };
 
   return (
@@ -57,7 +54,9 @@ export const Register = () => {
         required
       />
       {error && <p>{error}</p>}
-      <button type="submit">Register</button>
+      <button type="submit" disabled={loading}>
+        Register
+      </button>
     </form>
   );
 };
