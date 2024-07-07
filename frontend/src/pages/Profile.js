@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile, updateProfile } from "../features/auth/authSlice";
+import { ProfileForm } from "../components/ProfileForm";
+import { validateProfileForm } from "../utils/validation";
 
 export const Profile = () => {
   const dispatch = useDispatch();
-  const { user, loading, error } = useSelector((state) => state.auth);
+  const { user, loading } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     profilePicture: "",
     bio: "",
   });
+  const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -34,6 +37,11 @@ export const Profile = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    const validationErrors = validateProfileForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     const changes = {};
     if (formData.username !== user.username)
       changes.username = formData.username;
@@ -61,51 +69,15 @@ export const Profile = () => {
           )}
         </div>
       ) : (
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={onChange}
-            placeholder="Username"
-          />
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={onChange}
-            placeholder="Email"
-          />
-          <input
-            type="text"
-            name="profilePicture"
-            value={formData.profilePicture}
-            onChange={onChange}
-            placeholder="Profile Picture URL"
-          />
-          <textarea
-            name="bio"
-            value={formData.bio}
-            onChange={onChange}
-            placeholder="Bio"
-          />
-          {error && <p>{error}</p>}
-          <button
-            type="submit"
-            disabled={
-              loading ||
-              (formData.username === user.username &&
-                formData.email === user.email &&
-                formData.profilePicture === user.profilePicture &&
-                formData.bio === user.bio)
-            }
-          >
-            Update Profile
-          </button>
-          <button type="button" onClick={() => setIsEditing(false)}>
-            Cancel
-          </button>
-        </form>
+        <ProfileForm
+          user={user}
+          formData={formData}
+          onChange={onChange}
+          onSubmit={onSubmit}
+          setIsEditing={setIsEditing}
+          errors={errors}
+          loading={loading}
+        />
       )}
     </div>
   );
