@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import api from "../utils/api";
-import { updateProfile } from "../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile, updateProfile } from "../features/auth/authSlice";
 
 export const Profile = () => {
   const dispatch = useDispatch();
+  const { user, loading, error } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -13,21 +13,19 @@ export const Profile = () => {
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data } = await api.get("/users/profile");
-        setFormData({
-          username: data.username,
-          email: data.email,
-          profilePicture: data.profilePicture || "",
-          bio: data.bio || "",
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-    fetchProfile();
-  }, []);
+    dispatch(fetchProfile());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        email: user.email || "",
+        profilePicture: user.profilePicture || "",
+        bio: user.bio || "",
+      });
+    }
+  }, [user]);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,7 +67,10 @@ export const Profile = () => {
         onChange={onChange}
         placeholder="Bio"
       />
-      <button type="submit">Update Profile</button>
+      {error && <p>{error}</p>}
+      <button type="submit" disabled={loading}>
+        Update Profile
+      </button>
     </form>
   );
 };
