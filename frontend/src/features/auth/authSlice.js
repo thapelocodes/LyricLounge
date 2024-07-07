@@ -42,6 +42,18 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+export const fetchProfile = createAsyncThunk(
+  "auth/fetchProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/users/profile");
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   user: null,
   token: null,
