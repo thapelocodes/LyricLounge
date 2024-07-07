@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import api from "../utils/api";
 import { updateProfile } from "../features/auth/authSlice";
 
 export const Profile = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
