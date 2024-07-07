@@ -11,6 +11,7 @@ export const Profile = () => {
     profilePicture: "",
     bio: "",
   });
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -33,44 +34,79 @@ export const Profile = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProfile(formData));
+    const changes = {};
+    if (formData.username !== user.username)
+      changes.username = formData.username;
+    if (formData.email !== user.email) changes.email = formData.email;
+    if (formData.profilePicture !== user.profilePicture)
+      changes.profilePicture = formData.profilePicture;
+    if (formData.bio !== user.bio) changes.bio = formData.bio;
+    if (Object.keys(changes).length > 0) {
+      dispatch(updateProfile(changes));
+    }
+    setIsEditing(false);
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        name="username"
-        value={formData.username}
-        onChange={onChange}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={onChange}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="text"
-        name="profilePicture"
-        value={formData.profilePicture}
-        onChange={onChange}
-        placeholder="Profile Picture URL"
-      />
-      <textarea
-        name="bio"
-        value={formData.bio}
-        onChange={onChange}
-        placeholder="Bio"
-      />
-      {error && <p>{error}</p>}
-      <button type="submit" disabled={loading}>
-        Update Profile
-      </button>
-    </form>
+    <div>
+      <h2>Profile</h2>
+      {!isEditing ? (
+        <div>
+          <p>Username: {user?.username}</p>
+          <p>Email: {user?.email}</p>
+          <p>Profile Picture: {user?.profilePicture}</p>
+          <p>Bio: {user?.bio}</p>
+          {user && (
+            <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+          )}
+        </div>
+      ) : (
+        <form onSubmit={onSubmit}>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={onChange}
+            placeholder="Username"
+          />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={onChange}
+            placeholder="Email"
+          />
+          <input
+            type="text"
+            name="profilePicture"
+            value={formData.profilePicture}
+            onChange={onChange}
+            placeholder="Profile Picture URL"
+          />
+          <textarea
+            name="bio"
+            value={formData.bio}
+            onChange={onChange}
+            placeholder="Bio"
+          />
+          {error && <p>{error}</p>}
+          <button
+            type="submit"
+            disabled={
+              loading ||
+              (formData.username === user.username &&
+                formData.email === user.email &&
+                formData.profilePicture === user.profilePicture &&
+                formData.bio === user.bio)
+            }
+          >
+            Update Profile
+          </button>
+          <button type="button" onClick={() => setIsEditing(false)}>
+            Cancel
+          </button>
+        </form>
+      )}
+    </div>
   );
 };
