@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -9,8 +10,15 @@ export const Login = () => {
   });
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
   const { login, password } = formData;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/profile");
+  }, [isAuthenticated, navigate]);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
