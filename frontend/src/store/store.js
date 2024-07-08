@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
 import profileReducer from "../features/profile/profileSlice";
+import { configAPI } from "../utils/api";
 
 export const store = configureStore({
   reducer: {
@@ -8,3 +9,5 @@ export const store = configureStore({
     profile: profileReducer,
   },
 });
+
+configAPI(store);

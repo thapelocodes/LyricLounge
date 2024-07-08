@@ -60,10 +60,10 @@ export const Profile = () => {
       <h2>Profile</h2>
       {!isEditing ? (
         <div>
-          <p>Username: {user?.username}</p>
-          <p>Email: {user?.email}</p>
-          <p>Profile Picture: {user?.profilePicture}</p>
-          <p>Bio: {user?.bio}</p>
+          <p>Username: {user.username}</p>
+          <p>Email: {user.email}</p>
+          <p>Profile Picture: {user.profilePicture}</p>
+          <p>Bio: {user.bio}</p>
           {user && (
             <button onClick={() => setIsEditing(true)}>Edit Profile</button>
           )}
