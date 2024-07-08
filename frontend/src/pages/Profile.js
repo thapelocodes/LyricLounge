@@ -55,6 +55,15 @@ export const Profile = () => {
     setIsEditing(false);
   };
 
+  const hasChanges = () => {
+    return (
+      formData.username !== user.username ||
+      formData.email !== user.email ||
+      formData.profilePicture !== user.profilePicture ||
+      formData.bio !== user.bio
+    );
+  };
+
   return (
     <div>
       <h2>Profile</h2>
@@ -70,13 +79,13 @@ export const Profile = () => {
         </div>
       ) : (
         <ProfileForm
-          user={user}
           formData={formData}
           onChange={onChange}
           onSubmit={onSubmit}
           setIsEditing={setIsEditing}
           errors={errors}
           loading={loading}
+          hasChanges={hasChanges}
         />
       )}
     </div>

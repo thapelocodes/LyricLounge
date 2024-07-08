@@ -14,11 +14,13 @@ const registerUser = async (req, res) => {
     const emailExists = await User.findOne({ email });
     const usernameExists = await User.findOne({ username });
     if (emailExists) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res
+        .status(400)
+        .json({ message: `An account for ${email} already exists` });
     }
 
     if (usernameExists) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(400).json({ message: `${username} is already in use` });
     }
 
     const user = await User.create({ username, email, password });

@@ -53,6 +53,14 @@ export const Register = () => {
         placeholder="Password"
         required
       />
+      <input
+        type="password"
+        name="confirmPassword"
+        value={confirmPassword}
+        onChange={onChange}
+        placeholder="Confirm Password"
+        required
+      />
       {error && <p>{error}</p>}
       <button type="submit" disabled={loading}>
         Register

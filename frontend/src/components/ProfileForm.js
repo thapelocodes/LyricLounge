@@ -1,13 +1,13 @@
 import React from "react";
 
 export const ProfileForm = ({
-  user,
   formData,
   onChange,
   onSubmit,
   setIsEditing,
   errors,
   loading,
+  hasChanges,
 }) => {
   return (
     <form onSubmit={onSubmit}>
@@ -34,6 +34,7 @@ export const ProfileForm = ({
         onChange={onChange}
         placeholder="Profile Picture URL"
       />
+      {errors.profilePicture && <p>{errors.profilePicture}</p>}
       <textarea
         name="bio"
         value={formData.bio}
@@ -41,16 +42,7 @@ export const ProfileForm = ({
         placeholder="Bio"
       />
       {errors.bio && <p>{errors.bio}</p>}
-      <button
-        type="submit"
-        disabled={
-          loading ||
-          (formData.username === user.username &&
-            formData.email === user.email &&
-            formData.profilePicture === user.profilePicture &&
-            formData.bio === user.bio)
-        }
-      >
+      <button type="submit" disabled={!hasChanges() || loading}>
         Update Profile
       </button>
       <button type="button" onClick={() => setIsEditing(false)}>
