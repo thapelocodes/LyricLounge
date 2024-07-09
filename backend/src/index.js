@@ -3,6 +3,7 @@ const http = require("http");
 const WebSocket = require("ws");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const chatRoomRoutes = require("./routes/chatRoomRoutes");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -14,6 +15,7 @@ app.get("/health", (req, res) => {
   res.send("Server is running");
 });
 app.use("/api/users", userRoutes);
+app.use("/api/chatrooms", chatRoomRoutes);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
