@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile, updateProfile } from "../features/auth/authSlice";
+import { setProfile } from "../features/profile/profileSlice";
 import { ProfileForm } from "../components/ProfileForm";
 import { validateProfileForm } from "../utils/validation";
 
@@ -17,7 +18,11 @@ export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchProfile());
+    dispatch(fetchProfile()).then((action) => {
+      if (fetchProfile.fulfilled.match(action)) {
+        dispatch(setProfile(action.payload));
+      }
+    });
   }, [dispatch]);
 
   useEffect(() => {
@@ -50,7 +55,11 @@ export const Profile = () => {
       changes.profilePicture = formData.profilePicture;
     if (formData.bio !== user.bio) changes.bio = formData.bio;
     if (Object.keys(changes).length > 0) {
-      dispatch(updateProfile(changes));
+      dispatch(updateProfile(changes)).then((action) => {
+        if (updateProfile.fulfilled.match(action)) {
+          dispatch(setProfile(action.payload));
+        }
+      });
     }
     setIsEditing(false);
   };
@@ -69,10 +78,10 @@ export const Profile = () => {
       <h2>Profile</h2>
       {!isEditing ? (
         <div>
-          <p>Username: {user.username}</p>
-          <p>Email: {user.email}</p>
-          <p>Profile Picture: {user.profilePicture}</p>
-          <p>Bio: {user.bio}</p>
+          <p>Username: {user && user.username}</p>
+          <p>Email: {user && user.email}</p>
+          <p>Profile Picture: {user && user.profilePicture}</p>
+          <p>Bio: {user && user.bio}</p>
           {user && (
             <button onClick={() => setIsEditing(true)}>Edit Profile</button>
           )}
