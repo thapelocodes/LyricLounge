@@ -19,10 +19,10 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<PrivateRoute />}>
-            <Route path="" element={<Profile />} />
+            <Route index element={<Profile />} />
           </Route>
           <Route path="/chatrooms" element={<PrivateRoute />}>
-            <Route path="" element={<ChatRooms />} />
+            <Route index element={<ChatRooms />} />
           </Route>
         </Routes>
       </Router>
