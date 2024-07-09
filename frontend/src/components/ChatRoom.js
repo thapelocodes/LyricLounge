@@ -1,11 +1,11 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export const ChatRoom = ({ chatRoom }) => {
-  const history = useHistory();
+const ChatRoom = ({ chatRoom }) => {
+  const navigate = useNavigate();
 
   const handleEnterChatRoom = () => {
-    history.push(`/chatroom/${chatRoom._id}`);
+    navigate.push(`/chatroom/${chatRoom._id}`);
   };
 
   return (
@@ -15,3 +15,5 @@ export const ChatRoom = ({ chatRoom }) => {
     </div>
   );
 };
+
+export default ChatRoom;
