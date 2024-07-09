@@ -2,11 +2,13 @@ const express = require("express");
 const {
   createChatRoom,
   fetchChatRooms,
-} = require("../controllers/chatRoomController");
-const { authMiddleware } = require("../middlewares/authMiddleware");
+  fetchChatRoomMessages,
+} = require("../controllers/Controller");
+const { authMiddleware } = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.post("/chatrooms", authMiddleware, createChatRoom);
-router.get("/chatrooms", authMiddleware, fetchChatRooms);
+router.post("/", authMiddleware, createChatRoom);
+router.get("/", authMiddleware, fetchChatRooms);
+router.get("/:id/messages", authMiddleware, fetchChatRoomMessages);
 
 module.exports = router;

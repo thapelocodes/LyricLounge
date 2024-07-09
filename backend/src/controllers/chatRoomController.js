@@ -1,4 +1,5 @@
 const ChatRoom = require("../models/ChatRoom");
+const Message = require("../models/Message");
 
 const createChatRoom = async (req, res) => {
   const { name, userIds } = req.body;
@@ -19,4 +20,17 @@ const fetchChatRooms = async (req, res) => {
   }
 };
 
-module.exports = { createChatRoom, fetchChatRooms };
+const fetchChatRoomMessages = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const messages = await Message.find({ chatRoomId: id }).populate(
+      "sender",
+      "username"
+    );
+    res.json({ messages });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createChatRoom, fetchChatRooms, fetchChatRoomMessages };
