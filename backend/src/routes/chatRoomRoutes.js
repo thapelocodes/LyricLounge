@@ -3,7 +3,7 @@ const {
   createChatRoom,
   fetchChatRooms,
   fetchChatRoomMessages,
-} = require("../controllers/Controller");
+} = require("../controllers/chatRoomController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const router = express.Router();
 
