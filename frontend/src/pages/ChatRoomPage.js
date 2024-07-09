@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import socket from "../utils/websocket";
 import axios from "axios";
 
@@ -7,12 +8,14 @@ export const ChatRoomPage = () => {
   const { chatRoomId } = useParams();
   const { messages, setMessages } = useState([]);
   const { newMessage, setNewMessage } = useState("");
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
         const response = await axios.get(
-          `/api/chatrooms/${chatRoomId}/messages`
+          `/api/chatrooms/${chatRoomId}/messages`,
+          { headers: { Authorization: `Bearer ${user.token}` } }
         );
         setMessages(response.data);
       } catch (error) {
@@ -32,11 +35,11 @@ export const ChatRoomPage = () => {
     return () => {
       socket.onmessage = null;
     };
-  }, [chatRoomId, setMessages]);
+  }, [chatRoomId, setMessages, user.token]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      const message = { content: newMessage, chatRoomId };
+      const message = { content: newMessage, chatRoomId, sender: user.id };
       socket.send(JSON.stringify(message));
       setNewMessage("");
     }
@@ -48,6 +51,9 @@ export const ChatRoomPage = () => {
       <div>
         {messages.map((message) => (
           <div key={message._id}>
+            <p>
+              <strong>{message.sender.username}</strong>
+            </p>
             <p>{message.content}</p>
           </div>
         ))}
