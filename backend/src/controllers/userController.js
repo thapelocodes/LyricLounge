@@ -57,7 +57,7 @@ const loginUser = async (req, res) => {
       res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {
-    resizeTo.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
