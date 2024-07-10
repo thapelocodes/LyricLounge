@@ -6,8 +6,8 @@ import axios from "axios";
 
 export const ChatRoomPage = () => {
   const { chatRoomId } = useParams();
-  const { messages, setMessages } = useState([]);
-  const { newMessage, setNewMessage } = useState("");
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -28,14 +28,14 @@ export const ChatRoomPage = () => {
     socket.onmessage = (e) => {
       const message = JSON.parse(e.data);
       if (message.chatRoomId === chatRoomId) {
-        setMessages((messages) => [...messages, message]);
+        setMessages((prevMessages) => [...prevMessages, message]);
       }
     };
 
     return () => {
       socket.onmessage = null;
     };
-  }, [chatRoomId, setMessages, user.token]);
+  }, [chatRoomId, user.token]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
