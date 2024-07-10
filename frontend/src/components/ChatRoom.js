@@ -5,7 +5,7 @@ const ChatRoom = ({ chatRoom }) => {
   const navigate = useNavigate();
 
   const handleEnterChatRoom = () => {
-    navigate.push(`/chatroom/${chatRoom._id}`);
+    navigate(`/chatroom/${chatRoom._id}`);
   };
 
   return (
