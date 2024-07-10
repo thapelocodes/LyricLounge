@@ -10,9 +10,11 @@ export const ChatRooms = () => {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
+        console.log("Fetching chat rooms...");
         const response = await axios.get("/api/chatrooms", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
+        console.log("Chat rooms fetched:", response.data);
         setChatRooms(response.data.chatrooms);
       } catch (error) {
         console.error("Error fetching chat rooms", error);
@@ -25,9 +27,13 @@ export const ChatRooms = () => {
   return (
     <div>
       <h1>Chat Rooms</h1>
-      {chatRooms.map((chatRoom) => (
-        <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
-      ))}
+      {chatRooms.length > 0 ? (
+        chatRooms.map((chatRoom) => (
+          <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
+        ))
+      ) : (
+        <p>No chat rooms available</p>
+      )}
     </div>
   );
 };
