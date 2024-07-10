@@ -6,13 +6,14 @@ import ChatRoom from "../components/ChatRoom";
 export const ChatRooms = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const { user } = useSelector((state) => state.auth);
+
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
         const response = await axios.get("/api/chatrooms", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        setChatRooms(response.data);
+        setChatRooms(response.data.chatrooms);
       } catch (error) {
         console.error("Error fetching chat rooms", error);
       }
@@ -25,7 +26,7 @@ export const ChatRooms = () => {
     <div>
       <h1>Chat Rooms</h1>
       {chatRooms.map((chatRoom) => (
-        <ChatRoom key={chatRoom.id} chatRoom={chatRoom} />
+        <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
       ))}
     </div>
   );
