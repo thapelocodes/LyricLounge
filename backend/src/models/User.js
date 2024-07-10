@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   profilePicture: { type: String },
   bio: { type: String },
+  chatRooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "ChatRoom" }],
 });
 
 userSchema.pre("save", async function (next) {
