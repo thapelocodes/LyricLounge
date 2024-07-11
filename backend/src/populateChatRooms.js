@@ -26,22 +26,26 @@ const genres = [
   "Barcadi",
 ];
 
-const prepopulateChatrooms = async () => {
+async function populateChatRooms() {
   await mongoose.connect("mongodb://localhost:27017/lyriclounge", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
 
-  for (let genre of genres) {
-    await ChatRoom.create({
+  try {
+    const chatRooms = genres.map((genre) => ({
       name: genre,
-      description: `A chatroom for ${genre} enthusiasts.`,
+      description: `${genre} music discussion`,
       users: [],
-    });
-  }
+    }));
 
-  console.log("Chatrooms prepopulated");
-  mongoose.disconnect();
-};
+    await ChatRoom.insertMany(chatRooms);
+    console.log("Chat rooms populated successfully");
+  } catch (error) {
+    console.error("Error populating chat rooms:", error);
+  } finally {
+    await mongoose.disconnect();
+  }
+}
 
 prepopulateChatrooms();
