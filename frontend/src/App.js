@@ -9,11 +9,14 @@ import { store } from "./store/store";
 import { PrivateRoute } from "./routes/protectedRoutes";
 import { Profile } from "./pages/Profile";
 import { ChatRooms } from "./pages/ChatRooms";
+import { Navbar } from "./components/Navbar";
+import { Logout } from "./components/Logout";
 
-export default function App() {
+function App() {
   return (
     <Provider store={store}>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" Component={Home} />
           <Route path="/register" element={<Register />} />
@@ -24,8 +27,13 @@ export default function App() {
           <Route path="/chatrooms" element={<PrivateRoute />}>
             <Route index element={<ChatRooms />} />
           </Route>
+          <Route path="/logout" element={<PrivateRoute />}>
+            <Route index element={<Logout />} />
+          </Route>
         </Routes>
       </Router>
     </Provider>
   );
 }
+
+export default App;
