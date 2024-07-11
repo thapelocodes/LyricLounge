@@ -6,7 +6,7 @@ const chatRoomSchema = new mongoose.Schema({
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    required: false,
   },
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   messages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }],
