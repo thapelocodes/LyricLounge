@@ -9,6 +9,12 @@ const SearchChatRooms = ({ onClose }) => {
 
   const handleSearch = async () => {
     try {
+      if (!user || !user.token) {
+        console.error("User token is missing.");
+        return;
+      }
+
+      console.log(`User token: ${user.token}`);
       const response = await axios.get(
         `/api/chatrooms/search?query=${searchTerm}`,
         {
@@ -17,9 +23,15 @@ const SearchChatRooms = ({ onClose }) => {
           },
         }
       );
+      console.log("Search results: ", response.data.chatrooms);
       setResults(response.data.chatrooms);
     } catch (error) {
       console.error("Error searching chat rooms: ", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+        console.error("Response headers:", error.response.headers);
+      }
     }
   };
 
