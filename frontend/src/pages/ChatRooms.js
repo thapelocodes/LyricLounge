@@ -27,7 +27,7 @@ export const ChatRooms = () => {
   return (
     <div>
       <h1>Chat Rooms</h1>
-      <button onClick={handleOpenSearch}>Search</button>
+      <button onClick={handleOpenSearch}>Discover Chat Rooms</button>
       {showSearch && <SearchChatRooms onClose={handleCloseSearch} />}
       {chatrooms ? (
         chatrooms.map((chatRoom) => (
