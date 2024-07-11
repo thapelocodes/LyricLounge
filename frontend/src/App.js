@@ -11,6 +11,7 @@ import { Profile } from "./pages/Profile";
 import { ChatRooms } from "./pages/ChatRooms";
 import { Navbar } from "./components/Navbar";
 import { Logout } from "./components/Logout";
+import { ChatRoomPage } from "./pages/ChatRoomPage";
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
           </Route>
           <Route path="/chatrooms" element={<PrivateRoute />}>
             <Route index element={<ChatRooms />} />
+          </Route>
+          <Route path="/chatroom/:chatRoomId" element={<PrivateRoute />}>
+            <Route index element={<ChatRoomPage />} />
           </Route>
           <Route path="/logout" element={<PrivateRoute />}>
             <Route index element={<Logout />} />

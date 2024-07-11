@@ -1,34 +1,24 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { fetchChatRooms } from "../features/chatroom/chatroomSlice";
+import { useDispatch, useSelector } from "react-redux";
 import ChatRoom from "../components/ChatRoom";
 
 export const ChatRooms = () => {
-  const [chatRooms, setChatRooms] = useState([]);
-  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { chatrooms, loading, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    const fetchChatRooms = async () => {
-      try {
-        console.log("Fetching chat rooms...");
-        const response = await axios.get("/api/chatrooms", {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        console.log("Chat rooms fetched:", response.data);
-        setChatRooms(response.data.chatrooms);
-      } catch (error) {
-        console.error("Error fetching chat rooms", error);
-      }
-    };
+    dispatch(fetchChatRooms());
+  }, [dispatch]);
 
-    fetchChatRooms();
-  }, [user]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching chat rooms:{error.message}</p>;
 
   return (
     <div>
       <h1>Chat Rooms</h1>
-      {chatRooms.length > 0 ? (
-        chatRooms.map((chatRoom) => (
+      {chatrooms ? (
+        chatrooms.map((chatRoom) => (
           <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))
       ) : (
