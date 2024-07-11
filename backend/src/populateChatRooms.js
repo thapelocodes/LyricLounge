@@ -26,7 +26,7 @@ const genres = [
   "Barcadi",
 ];
 
-async function populateChatRooms() {
+const prepopulateChatRooms = async () => {
   await mongoose.connect("mongodb://localhost:27017/lyriclounge", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -46,6 +46,6 @@ async function populateChatRooms() {
   } finally {
     await mongoose.disconnect();
   }
-}
+};
 
-prepopulateChatrooms();
+prepopulateChatRooms();
