@@ -36,7 +36,7 @@ const prepopulateChatrooms = async () => {
     await ChatRoom.create({
       name: genre,
       description: `A chatroom for ${genre} enthusiasts.`,
-      creator: null,
+      users: [],
     });
   }
 
