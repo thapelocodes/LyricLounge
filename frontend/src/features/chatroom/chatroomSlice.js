@@ -11,7 +11,7 @@ const initialState = {
 export const fetchChatRooms = createAsyncThunk(
   "chatrooms/fetchChatRooms",
   async (_, { getState, rejectWithValue }) => {
-    const token = getState().auth.user.token;
+    const token = getState().auth.token;
     if (!token) return rejectWithValue("User token is missing");
 
     try {
@@ -31,7 +31,7 @@ export const fetchChatRooms = createAsyncThunk(
 export const searchChatRooms = createAsyncThunk(
   "chatrooms/searchChatRooms",
   async (query, { getState, rejectWithValue }) => {
-    const token = getState().auth.user.token;
+    const token = getState().auth.token;
     if (!token) return rejectWithValue("User token is missing");
 
     try {

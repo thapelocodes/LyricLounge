@@ -9,7 +9,7 @@ import SearchChatRooms from "../components/SearchChatRoom";
 
 export const ChatRooms = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { token } = useSelector((state) => state.auth);
   const { chatrooms, searchResults, loading, error } = useSelector(
     (state) => state.chat
   );
@@ -17,8 +17,8 @@ export const ChatRooms = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    if (user && user.token) dispatch(fetchChatRooms());
-  }, [user, dispatch]);
+    if (token) dispatch(fetchChatRooms());
+  }, [token, dispatch]);
 
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
