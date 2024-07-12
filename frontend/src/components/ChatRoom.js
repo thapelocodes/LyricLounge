@@ -12,6 +12,7 @@ const ChatRoom = ({ chatRoom }) => {
     <div onClick={handleEnterChatRoom}>
       <h2>{chatRoom.name}</h2>
       <p>{chatRoom.unreadMessages}</p>
+      <button>Join</button>
     </div>
   );
 };
