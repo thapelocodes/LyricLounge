@@ -1,4 +1,4 @@
-const socket = new WebSocket("ws://localhost:3001");
+const socket = new WebSocket("ws://localhost:5000");
 
 socket.onopen = () => {
   console.log("WebSocket connection established");
