@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const ChatRoom = require("./models/ChatRoom");
+require("dotenv").config();
 
 const genres = [
   "Hip-Hop",
@@ -27,7 +28,7 @@ const genres = [
 ];
 
 const prepopulateChatRooms = async () => {
-  await mongoose.connect("mongodb://localhost:27017/lyriclounge", {
+  await mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
@@ -36,6 +37,7 @@ const prepopulateChatRooms = async () => {
     const chatRooms = genres.map((genre) => ({
       name: genre,
       description: `${genre} music discussion`,
+      creator: null,
       users: [],
     }));
 
@@ -44,7 +46,7 @@ const prepopulateChatRooms = async () => {
   } catch (error) {
     console.error("Error populating chat rooms:", error);
   } finally {
-    await mongoose.disconnect();
+    await mongoose.connection.close();
   }
 };
 

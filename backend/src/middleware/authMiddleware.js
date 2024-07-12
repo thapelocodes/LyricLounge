@@ -13,6 +13,7 @@ const authMiddleware = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id).select("-password");
+      console.log(`User Authenticated. Token: ${req.user.token}`);
       next();
     } catch (error) {
       console.error("Not authorized, token failed");

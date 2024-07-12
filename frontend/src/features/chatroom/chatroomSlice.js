@@ -15,7 +15,7 @@ export const fetchChatRooms = createAsyncThunk(
     if (!token) return rejectWithValue("User token is missing");
 
     try {
-      const response = await axios.get("/api/chatrooms", {
+      const response = await axios.get("/api/chatrooms/my-chatrooms", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -39,6 +39,24 @@ export const searchChatRooms = createAsyncThunk(
         headers: {
           Authorization: `Bearer ${token}`,
         },
+      });
+      return response.data.chatrooms;
+    } catch (error) {
+      if (!error.response) throw error;
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getAllChatRooms = createAsyncThunk(
+  "chatrooms/getAllChatRooms",
+  async (_, { getState, rejectWithValue }) => {
+    const token = getState().auth.token;
+    if (!token) return rejectWithValue("User token is missing");
+
+    try {
+      const response = await axios.get("/api/chatrooms", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.chatrooms;
     } catch (error) {

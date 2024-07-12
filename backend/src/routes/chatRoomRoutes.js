@@ -14,6 +14,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, createChatRoom);
 router.get("/", authMiddleware, getAllChatRooms);
+router.get("/all", getAllChatRooms);
 router.get("/my-chatrooms", authMiddleware, fetchChatRooms);
 router.get("/:id/messages", authMiddleware, fetchChatRoomMessages);
 router.get("/search", authMiddleware, searchChatRooms);

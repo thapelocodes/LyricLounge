@@ -23,6 +23,7 @@ const createChatRoom = async (req, res) => {
 const getAllChatRooms = async (req, res) => {
   try {
     const chatRooms = await ChatRoom.find();
+    console.log(`Chat Rooms Retrieved: ${chatRooms.length}`);
     res.status(200).json(chatRooms);
   } catch (error) {
     res.status(500).json({ message: "Error fetching chat rooms" });
