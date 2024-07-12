@@ -20,10 +20,19 @@ const createChatRoom = async (req, res) => {
   }
 };
 
+const getAllChatRooms = async (req, res) => {
+  try {
+    const chatRooms = await ChatRoom.find();
+    res.status(200).json(chatRooms);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching chat rooms" });
+  }
+};
+
 const fetchChatRooms = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate("chatRooms");
-    res.json(user.chatRooms);
+    res.status(200).json(user.chatRooms);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -43,15 +52,15 @@ const fetchChatRoomMessages = async (req, res) => {
 };
 
 const searchChatRooms = async (req, res) => {
-  const { query } = req.query.query;
   try {
+    const { query } = req.query.query;
     const chatRooms = await ChatRoom.find({
       $or: [
         { name: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
       ],
     });
-    res.json(chatRooms);
+    res.status(200).json(chatRooms);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -124,6 +133,7 @@ const deleteChatRoom = async (req, res) => {
 
 module.exports = {
   createChatRoom,
+  getAllChatRooms,
   fetchChatRooms,
   fetchChatRoomMessages,
   searchChatRooms,

@@ -7,12 +7,14 @@ const {
   joinChatRoom,
   leaveChatRoom,
   deleteChatRoom,
+  getAllChatRooms,
 } = require("../controllers/chatRoomController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.post("/", authMiddleware, createChatRoom);
-router.get("/", authMiddleware, fetchChatRooms);
+router.get("/", authMiddleware, getAllChatRooms);
+router.get("/my-chatrooms", authMiddleware, fetchChatRooms);
 router.get("/:id/messages", authMiddleware, fetchChatRoomMessages);
 router.get("/search", authMiddleware, searchChatRooms);
 router.post("/:id/join", authMiddleware, joinChatRoom);
