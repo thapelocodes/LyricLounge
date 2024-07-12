@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { fetchChatRooms } from "../features/chatroom/chatroomSlice";
+import {
+  fetchChatRooms,
+  searchChatRooms,
+} from "../features/chatroom/chatroomSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ChatRoom from "../components/ChatRoom";
 import SearchChatRooms from "../components/SearchChatRoom";
 
 export const ChatRooms = () => {
   const dispatch = useDispatch();
-  const { user, chatrooms, loading, error } = useSelector(
-    (state) => state.auth
+  const { user } = useSelector((state) => state.auth);
+  const { chatrooms, searchResults, loading, error } = useSelector(
+    (state) => state.chat
   );
   const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (user && user.token) dispatch(fetchChatRooms());
   }, [user, dispatch]);
 
-  const handleOpenSearch = () => {
-    setShowSearch(true);
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+    dispatch(searchChatRooms(searchTerm));
   };
 
-  const handleCloseSearch = () => {
-    setShowSearch(false);
-  };
+  const displayChatRooms = searchTerm ? searchResults : chatrooms;
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error fetching chat rooms:{error.message}</p>;
@@ -29,10 +33,15 @@ export const ChatRooms = () => {
   return (
     <div>
       <h1>Chat Rooms</h1>
-      <button onClick={handleOpenSearch}>Discover Chat Rooms</button>
-      {showSearch && <SearchChatRooms onClose={handleCloseSearch} />}
-      {chatrooms ? (
-        chatrooms.map((chatRoom) => (
+      <button onClick={() => setShowSearch(true)}>Discover Chat Rooms</button>
+      {showSearch && (
+        <SearchChatRooms
+          onClose={() => setShowSearch(false)}
+          onSearch={handleSearch}
+        />
+      )}
+      {displayChatRooms && displayChatRooms.length > 0 ? (
+        displayChatRooms.map((chatRoom) => (
           <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))
       ) : (

@@ -1,6 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const initialState = {
+  chatrooms: [],
+  searchResults: [],
+  loading: false,
+  error: null,
+};
+
 export const fetchChatRooms = createAsyncThunk(
   "chatrooms/fetchChatRooms",
   async (_, { getState, rejectWithValue }) => {
@@ -43,11 +50,8 @@ export const searchChatRooms = createAsyncThunk(
 
 const chatroomsSlice = createSlice({
   name: "chatrooms",
-  initialState: {
-    chatrooms: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchChatRooms.pending, (state) => {
