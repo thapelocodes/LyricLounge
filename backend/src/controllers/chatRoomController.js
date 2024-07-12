@@ -43,7 +43,7 @@ const fetchChatRoomMessages = async (req, res) => {
 };
 
 const searchChatRooms = async (req, res) => {
-  const { query } = req.query;
+  const { query } = req.query.query;
   try {
     const chatRooms = await ChatRoom.find({
       $or: [
