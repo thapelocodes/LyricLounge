@@ -5,6 +5,8 @@ export const fetchChatRooms = createAsyncThunk(
   "chatrooms/fetchChatRooms",
   async (_, { getState, rejectWithValue }) => {
     const token = getState().auth.user.token;
+    if (!token) return rejectWithValue("User token is missing");
+
     try {
       const response = await axios.get("/api/chatrooms", {
         headers: {
@@ -13,6 +15,7 @@ export const fetchChatRooms = createAsyncThunk(
       });
       return response.data.chatrooms;
     } catch (error) {
+      if (!error.response) throw error;
       return rejectWithValue(error.response.data);
     }
   }
@@ -37,7 +40,7 @@ const chatroomsSlice = createSlice({
       })
       .addCase(fetchChatRooms.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Failed to fetch chatrooms";
       });
   },
 });
