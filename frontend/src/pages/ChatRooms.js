@@ -27,9 +27,6 @@ export const ChatRooms = () => {
 
   const displayChatRooms = searchTerm ? searchResults : chatrooms;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching chat rooms:{error.message}</p>;
-
   return (
     <div>
       <h1>Chat Rooms</h1>
@@ -47,6 +44,8 @@ export const ChatRooms = () => {
       ) : (
         <p>No chat rooms available</p>
       )}
+      {loading && <p>Loading chat rooms...</p>}
+      {error && <p>Error fetching chat rooms: {error}</p>}
     </div>
   );
 };
