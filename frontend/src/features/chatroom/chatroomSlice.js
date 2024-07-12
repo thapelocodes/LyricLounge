@@ -21,6 +21,26 @@ export const fetchChatRooms = createAsyncThunk(
   }
 );
 
+export const searchChatRooms = createAsyncThunk(
+  "chatrooms/searchChatRooms",
+  async (query, { getState, rejectWithValue }) => {
+    const token = getState().auth.user.token;
+    if (!token) return rejectWithValue("User token is missing");
+
+    try {
+      const response = await axios.get(`/api/chatrooms/search?query=${query}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.chatrooms;
+    } catch (error) {
+      if (!error.response) throw error;
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const chatroomsSlice = createSlice({
   name: "chatrooms",
   initialState: {
@@ -41,6 +61,18 @@ const chatroomsSlice = createSlice({
       .addCase(fetchChatRooms.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch chatrooms";
+      })
+      .addCase(searchChatRooms.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchChatRooms.fulfilled, (state, action) => {
+        state.loading = false;
+        state.chatrooms = action.payload;
+      })
+      .addCase(searchChatRooms.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to search chat rooms";
       });
   },
 });
