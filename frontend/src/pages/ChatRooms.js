@@ -6,12 +6,14 @@ import SearchChatRooms from "../components/SearchChatRoom";
 
 export const ChatRooms = () => {
   const dispatch = useDispatch();
-  const { chatrooms, loading, error } = useSelector((state) => state.auth);
+  const { user, chatrooms, loading, error } = useSelector(
+    (state) => state.auth
+  );
   const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchChatRooms());
-  }, [dispatch]);
+    if (user && user.token) dispatch(fetchChatRooms());
+  }, [user, dispatch]);
 
   const handleOpenSearch = () => {
     setShowSearch(true);
