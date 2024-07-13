@@ -6,6 +6,7 @@ const chatroomschema = new mongoose.Schema({
   creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   isTyping: { type: Boolean, default: false },
+  isMember: { type: Boolean, default: false },
 });
 
 const Chatroom = mongoose.model("Chatroom", chatroomschema);
