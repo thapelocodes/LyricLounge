@@ -16,6 +16,6 @@ router
   .get(authMiddleware, getChatrooms);
 router.post("/:chatroomId/join", authMiddleware, joinChatroom);
 router.post("/:chatroomId/leave", authMiddleware, leaveChatroom);
-router.get("/userChatrooms", authMiddleware, getUserChatrooms);
+router.get("/user-chatrooms", authMiddleware, getUserChatrooms);
 
 module.exports = router;
