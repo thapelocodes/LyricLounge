@@ -8,6 +8,7 @@ import { validateProfileForm } from "../utils/validation";
 export const Profile = () => {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
+  const profile = useSelector((state) => state.profile.profile);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -18,50 +19,24 @@ export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchProfile()).then((action) => {
-      if (fetchProfile.fulfilled.match(action)) {
-        dispatch(setProfile(action.payload));
-      }
-    });
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (user) {
+    if (!profile) {
+      dispatch(fetchProfile()).then((response) => {
+        if (response.payload) {
+          dispatch(setProfile(response.payload));
+        }
+      });
+    } else {
       setFormData({
-        username: user.username || "",
-        email: user.email || "",
-        profilePicture: user.profilePicture || "",
-        bio: user.bio || "",
+        username: profile.username,
+        email: profile.email,
+        profilePicture: profile.profilePicture || "",
+        bio: profile.bio || "",
       });
     }
-  }, [user]);
+  }, [profile, dispatch]);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateProfileForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    const changes = {};
-    if (formData.username !== user.username)
-      changes.username = formData.username;
-    if (formData.email !== user.email) changes.email = formData.email;
-    if (formData.profilePicture !== user.profilePicture)
-      changes.profilePicture = formData.profilePicture;
-    if (formData.bio !== user.bio) changes.bio = formData.bio;
-    if (Object.keys(changes).length > 0) {
-      dispatch(updateProfile(changes)).then((action) => {
-        if (updateProfile.fulfilled.match(action)) {
-          dispatch(setProfile(action.payload));
-        }
-      });
-    }
-    setIsEditing(false);
   };
 
   const hasChanges = () => {
@@ -73,29 +48,61 @@ export const Profile = () => {
     );
   };
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validateProfileForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+    dispatch(updateProfile(formData)).then((response) => {
+      if (!response.error) {
+        setIsEditing(false);
+        dispatch(fetchProfile()).then((response) => {
+          if (response.payload) {
+            dispatch(setProfile(response.payload));
+          }
+        });
+      }
+    });
+  };
+
   return (
     <div>
       <h2>Profile</h2>
-      {!isEditing ? (
-        <div>
-          <p>Username: {user && user.username}</p>
-          <p>Email: {user && user.email}</p>
-          <p>Profile Picture: {user && user.profilePicture}</p>
-          <p>Bio: {user && user.bio}</p>
-          {user && (
-            <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+      {loading && <p>Loading...</p>}
+      {!loading && profile && (
+        <>
+          {!isEditing ? (
+            <div>
+              <p>Username: {user && user.username}</p>
+              <p>Email: {user && user.email}</p>
+              <p>
+                Profile Picture:{" "}
+                {user && user.profilePicture ? (
+                  <img src={user.profilePicture} alt="Profile" width="100px" />
+                ) : (
+                  ""
+                )}
+              </p>
+              <p>Bio: {user && user.bio}</p>
+              {user && (
+                <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+              )}
+            </div>
+          ) : (
+            <ProfileForm
+              formData={formData}
+              onChange={onChange}
+              onSubmit={onSubmit}
+              setIsEditing={setIsEditing}
+              errors={errors}
+              loading={loading}
+              hasChanges={hasChanges}
+            />
           )}
-        </div>
-      ) : (
-        <ProfileForm
-          formData={formData}
-          onChange={onChange}
-          onSubmit={onSubmit}
-          setIsEditing={setIsEditing}
-          errors={errors}
-          loading={loading}
-          hasChanges={hasChanges}
-        />
+        </>
       )}
     </div>
   );
