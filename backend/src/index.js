@@ -3,9 +3,11 @@ const http = require("http");
 const WebSocket = require("ws");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 
 connectDB();
 
@@ -14,6 +16,7 @@ app.get("/health", (req, res) => {
   res.send("Server is running");
 });
 app.use("/api/users", userRoutes);
+app.use("/api/chats", chatRoutes);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
