@@ -71,74 +71,66 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      sessionStorage.setItem("token", null);
+      localStorage.setItem("token", null);
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
-        console.log("loginUser pending");
         state.loading = true;
         state.error = null;
         state.isAuthenticated = false;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log("loginUser fulfilled:", action.payload);
         state.loading = false;
         state.user = action.payload;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        sessionStorage.setItem("token", action.payload.token);
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
-        console.log("loginUser rejected:", action.payload);
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
       })
       .addCase(registerUser.pending, (state) => {
-        console.log("registerUser pending");
         state.loading = true;
         state.error = null;
         state.success = false;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        console.log("registerUser fulfilled:", action.payload);
         state.loading = false;
         state.user = action.payload;
         state.success = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
-        console.log("registerUser rejected:", action.payload);
         state.loading = false;
         state.error = action.payload;
         state.success = false;
       })
       .addCase(updateProfile.pending, (state) => {
-        console.log("updateProfile pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
-        console.log("updateProfile fulfilled:", action.payload);
         state.loading = false;
         state.user = action.payload;
       })
       .addCase(updateProfile.rejected, (state, action) => {
-        console.log("updateProfile rejected:", action.payload);
         state.loading = false;
         state.error = action.payload;
       })
       .addCase(fetchProfile.pending, (state) => {
-        console.log("fetchProfile pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
-        console.log("fetchProfile fulfilled:", action.payload);
         state.loading = false;
         state.user = action.payload;
       })
       .addCase(fetchProfile.rejected, (state, action) => {
-        console.log("fetchProfile rejected:", action.payload);
         state.loading = false;
         state.error = action.payload;
       });
