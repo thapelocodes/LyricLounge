@@ -83,7 +83,11 @@ export const Profile = () => {
                 {user && user.profilePicture ? (
                   <img src={user.profilePicture} alt="Profile" width="100px" />
                 ) : (
-                  ""
+                  <img
+                    src={require("../assets/profile-user_64572.png")}
+                    alt="Profile"
+                    width="100px"
+                  />
                 )}
               </p>
               <p>Bio: {user && user.bio}</p>
