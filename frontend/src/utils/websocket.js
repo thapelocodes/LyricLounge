@@ -1,5 +1,3 @@
-import WebSocket from "ws";
-
 const socket = new WebSocket("ws://localhost:5000");
 
 socket.onopen = () => {
