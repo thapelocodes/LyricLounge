@@ -3,16 +3,24 @@ import axios from "axios";
 
 export const fetchChatrooms = createAsyncThunk(
   "chat/fetchChatrooms",
-  async () => {
-    const response = await axios.get("/api/chats");
+  async (_, { getState }) => {
+    const state = getState();
+    const token = state.auth.token;
+    const response = await axios.get("/api/chats", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   }
 );
 
 export const fetchUserChatrooms = createAsyncThunk(
   "chat/fetchUserChatrooms",
-  async () => {
-    const response = await axios.get("/api/chats/user-chatrooms");
+  async (_, { getState }) => {
+    const state = getState();
+    const token = state.auth.token;
+    const response = await axios.get("/api/chats/user-chatrooms", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   }
 );
