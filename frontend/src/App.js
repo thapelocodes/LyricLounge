@@ -9,6 +9,7 @@ import { store } from "./store/store";
 import { PrivateRoute } from "./routes/protectedRoutes";
 import { Profile } from "./pages/Profile";
 import { Navbar } from "./components/Navbar";
+import { Chatrooms } from "./pages/Chatrooms";
 
 export default function App() {
   return (
@@ -21,6 +22,9 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<PrivateRoute />}>
             <Route path="" element={<Profile />} />
+          </Route>
+          <Route path="/chat" element={<PrivateRoute />}>
+            <Route path="" element={<Chatrooms />} />
           </Route>
         </Routes>
       </Router>
