@@ -25,6 +25,10 @@ export const Navbar = () => {
             </>
             <br />
             <>
+              <Link to="/chat">Chat</Link>
+            </>
+            <br />
+            <>
               <button onClick={handleLogout}>Logout</button>
             </>
           </>
