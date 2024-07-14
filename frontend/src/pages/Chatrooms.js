@@ -20,8 +20,8 @@ export const Chatrooms = () => {
     <div>
       <h1>Chatrooms</h1>
       <div>
-        <h2>Public Chatrooms</h2>
-        {chatrooms.map((chatRoom) => (
+        <h2>Your Chatrooms</h2>
+        {userChatrooms.map((chatRoom) => (
           <ChatRoom
             key={chatRoom._id}
             chatRoom={chatRoom}
@@ -31,8 +31,8 @@ export const Chatrooms = () => {
         ))}
       </div>
       <div>
-        <h2>Your Chatrooms</h2>
-        {userChatrooms.map((chatRoom) => (
+        <h2>Public Chatrooms</h2>
+        {chatrooms.map((chatRoom) => (
           <ChatRoom
             key={chatRoom._id}
             chatRoom={chatRoom}
