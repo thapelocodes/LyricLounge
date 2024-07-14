@@ -1,17 +1,20 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchChatrooms, fetchUserChatrooms } from "../store/chatroom/actions";
+import { fetchChatrooms, fetchUserChatrooms } from "../features/chat/chatSlice";
 import ChatRoom from "../components/Chatroom";
 
 export const Chatrooms = () => {
   const dispatch = useDispatch();
-  const chatrooms = useSelector((state) => state.chat.chatrooms);
-  const userChatrooms = useSelector((state) => state.chat.userChatrooms);
+  const { chatrooms, userChatrooms, loading } = useSelector(
+    (state) => state.chat
+  );
 
   useEffect(() => {
     dispatch(fetchChatrooms());
     dispatch(fetchUserChatrooms());
   }, [dispatch]);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div>
