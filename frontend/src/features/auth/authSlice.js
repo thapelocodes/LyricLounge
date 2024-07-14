@@ -3,7 +3,7 @@ import axios from "axios";
 import api from "../../utils/api";
 
 export const loginUser = createAsyncThunk(
-  "/auth/loginUser",
+  "auth/loginUser",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post("/api/users/login", formData);
