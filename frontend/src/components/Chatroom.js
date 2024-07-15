@@ -1,9 +1,18 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { joinChatroom, leaveChatroom } from "../features/chat/chatSlice";
 
-const ChatRoom = ({ chatRoom, onJoin, onLeave }) => {
-  const userChatrooms = useSelector((state) => state.chat.userChatrooms);
+const ChatRoom = ({ chatRoom }) => {
+  const dispatch = useDispatch();
+  const userChatrooms = useSelector((state) => state.user.chatrooms);
   const isMember = userChatrooms.some((c) => c._id === chatRoom._id);
+  const onJoin = (chatroomId) => {
+    dispatch(joinChatroom(chatroomId));
+  };
+  const onLeave = (chatroomId) => {
+    dispatch(leaveChatroom(chatroomId));
+  };
+
   return (
     <div>
       <h3>{chatRoom.name}</h3>
