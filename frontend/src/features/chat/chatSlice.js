@@ -32,7 +32,7 @@ export const joinChatroom = createAsyncThunk(
     const token = state.auth.token;
     const user = state.auth.user;
     const chatrooms = state.chat.chatrooms;
-    const chatroom = chatrooms.findById(chatroomId);
+    const chatroom = chatrooms.find((c) => c._id === chatroomId);
     try {
       const response = await axios.post(`/api/chats/${chatroomId}/join`, null, {
         headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +58,7 @@ export const leaveChatroom = createAsyncThunk(
     const token = state.auth.token;
     const user = state.auth.user;
     const chatrooms = state.chat.chatrooms;
-    const chatroom = chatrooms.findById(chatroomId);
+    const chatroom = chatrooms.find((c) => c._id === chatroomId);
     try {
       const response = await axios.post(
         `/api/chats/${chatroomId}/leave`,
@@ -126,7 +126,7 @@ const chatSlice = createSlice({
         state.loading = false;
       })
       .addCase(joinChatroom.rejected, (state, action) => {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.loading = false;
       })
       .addCase(leaveChatroom.pending, (state) => {
@@ -140,7 +140,7 @@ const chatSlice = createSlice({
         state.loading = false;
       })
       .addCase(leaveChatroom.rejected, (state, action) => {
-        state.error = action.payload.message;
+        state.error = action.error.message;
         state.loading = false;
       });
   },
