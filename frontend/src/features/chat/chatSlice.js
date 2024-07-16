@@ -166,7 +166,9 @@ const chatSlice = createSlice({
         state.error = null;
       })
       .addCase(createChatroom.fulfilled, (state, action) => {
-        state.chatrooms.push(action.payload);
+        const chatroom = action.payload;
+        state.chatrooms.push(chatroom);
+        state.userChatrooms.push(chatroom);
         state.loading = false;
       })
       .addCase(createChatroom.rejected, (state, action) => {
