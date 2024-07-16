@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../features/auth/authSlice";
+import { logoutUser } from "../features/auth/authSlice";
 import { clearProfile } from "../features/profile/profileSlice";
 import { Link } from "react-router-dom";
 
@@ -10,7 +10,7 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(clearProfile());
-    dispatch(logout());
+    dispatch(logoutUser());
   };
 
   return (
