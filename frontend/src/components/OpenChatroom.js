@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChatHistory, sendMessage } from "../features/chat/chatSlice";
 
-const ChatRoom = ({ chatRoom }) => {
+const OpenChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
   const messages =
     useSelector((state) => state.chat.messages[chatRoom._id]) || [];
@@ -45,4 +45,4 @@ const ChatRoom = ({ chatRoom }) => {
   );
 };
 
-export default ChatRoom;
+export default OpenChatRoom;
