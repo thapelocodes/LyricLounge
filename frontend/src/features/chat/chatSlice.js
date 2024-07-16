@@ -86,9 +86,38 @@ export const createChatroom = createAsyncThunk(
   }
 );
 
+export const fetchChatHistory = createAsyncThunk(
+  "chat/fetchChatHistory",
+  async (chatroomId, { getState }) => {
+    const state = getState();
+    const token = state.auth.token;
+    const response = await axios.get(`/api/messages/${chatroomId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return { chatroomId, messages: response.data };
+  }
+);
+
+export const sendMessage = createAsyncThunk(
+  "chat/sendMessage",
+  async ({ chatroomId, content }, { getState }) => {
+    const state = getState();
+    const token = state.auth.token;
+    const response = await axios.post(
+      `/api/messages/${chatroomId}`,
+      { content },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  }
+);
+
 const initialState = {
   chatrooms: [],
   userChatrooms: [],
+  messages: {},
   loading: false,
   error: null,
 };
@@ -174,6 +203,22 @@ const chatSlice = createSlice({
       .addCase(createChatroom.rejected, (state, action) => {
         state.error = action.error.message;
         state.loading = false;
+      })
+      .addCase(fetchChatHistory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchChatHistory.fulfilled, (state, action) => {
+        const { chatroomId, messages } = action.payload;
+        state.messages[chatroomId] = messages;
+        state.loading = false;
+      })
+      .addCase(fetchChatHistory.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loading = false;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        const message = action.payload;
+        state.messages[message.chatroomId].push(message);
       });
   },
 });
