@@ -2,19 +2,24 @@ const Chatroom = require("../models/Chatroom");
 const User = require("../models/User");
 
 const createChatroom = async (req, res) => {
-  const { name, description } = req.body;
-  const chatroom = new Chatroom({
-    name,
-    description,
-    creator: req.user._id || null,
-    users: req.user._id ? [req.user._id] : [],
-  });
-  await chatroom.save();
-  if (chatroom.creator) {
-    req.user.chatrooms.push(chatroom._id);
-    await req.user.save();
+  try {
+    const { name, description } = req.body;
+    const chatroom = new Chatroom({
+      name,
+      description,
+      creator: req.user._id || null,
+      users: req.user._id ? [req.user._id] : [],
+    });
+    await chatroom.save();
+    if (chatroom.creator) {
+      req.user.chatrooms.push(chatroom._id);
+      await req.user.save();
+    }
+    res.status(201).json(chatroom);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
-  res.status(201).json(chatroom);
 };
 
 const joinChatroom = async (req, res) => {
