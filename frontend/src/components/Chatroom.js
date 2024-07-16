@@ -4,7 +4,7 @@ import { joinChatroom, leaveChatroom } from "../features/chat/chatSlice";
 
 const ChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
-  const userChatrooms = useSelector((state) => state.auth.user.chatrooms);
+  const userChatrooms = useSelector((state) => state.chat.userChatrooms);
   const isMember = userChatrooms.some((c) => c._id === chatRoom._id);
   const onJoin = (chatroomId) => {
     dispatch(joinChatroom(chatroomId));
