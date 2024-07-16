@@ -62,6 +62,30 @@ export const leaveChatroom = createAsyncThunk(
   }
 );
 
+export const createChatroom = createAsyncThunk(
+  "chat/createChatroom",
+  async ({ name, description }, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.token;
+
+    try {
+      const response = await axios.post(
+        "/api/chats",
+        { name, description },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   chatrooms: [],
   userChatrooms: [],
@@ -134,6 +158,18 @@ const chatSlice = createSlice({
         state.loading = false;
       })
       .addCase(leaveChatroom.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loading = false;
+      })
+      .addCase(createChatroom.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createChatroom.fulfilled, (state, action) => {
+        state.chatrooms.push(action.payload);
+        state.loading = false;
+      })
+      .addCase(createChatroom.rejected, (state, action) => {
         state.error = action.error.message;
         state.loading = false;
       });
