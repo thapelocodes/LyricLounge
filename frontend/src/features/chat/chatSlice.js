@@ -34,9 +34,10 @@ export const joinChatroom = createAsyncThunk(
     const chatrooms = state.chat.chatrooms;
     const chatroom = chatrooms.find((c) => c._id === chatroomId);
     try {
-      await axios.post(`/api/chats/${chatroomId}/join`, null, {
+      const response = await axios.post(`/api/chats/${chatroomId}/join`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("Chatroom updated: ", response.data);
       if (
         !user.chatrooms.includes(chatroomId) &&
         !chatroom.users.includes(user._id)
@@ -44,7 +45,7 @@ export const joinChatroom = createAsyncThunk(
         user.chatrooms.push(chatroomId);
         chatroom.users.push(user._id);
       }
-      return { chatroom, user };
+      return { chatroom };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -60,9 +61,14 @@ export const leaveChatroom = createAsyncThunk(
     const chatrooms = state.chat.chatrooms;
     const chatroom = chatrooms.find((c) => c._id === chatroomId);
     try {
-      await axios.post(`/api/chats/${chatroomId}/leave`, null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.post(
+        `/api/chats/${chatroomId}/leave`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Chatroom updated: ", response.data);
       user.chatrooms = user.chatrooms.filter((id) => id !== chatroomId);
       chatroom.users = chatroom.users.filter((id) => id !== user._id);
       return { chatroom };
