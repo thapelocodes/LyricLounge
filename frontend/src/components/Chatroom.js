@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { joinChatroom, leaveChatroom, set } from "../features/chat/chatSlice";
+import {
+  joinChatroom,
+  leaveChatroom,
+  setOpenChatroom,
+} from "../features/chat/chatSlice";
 
 const ChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
@@ -12,6 +16,9 @@ const ChatRoom = ({ chatRoom }) => {
   const onLeave = (chatroomId) => {
     dispatch(leaveChatroom(chatroomId));
   };
+  const onOpen = (chatroomId) => {
+    dispatch(setOpenChatroom(chatroomId));
+  };
 
   useEffect(() => {}, [userChatrooms]);
 
@@ -22,7 +29,7 @@ const ChatRoom = ({ chatRoom }) => {
       {isMember ? (
         <>
           <button onClick={() => onLeave(chatRoom._id)}>Leave</button>
-          <button>Chat</button>
+          <button onClick={() => onOpen(chatRoom._id)}>Chat</button>
         </>
       ) : (
         <button onClick={() => onJoin(chatRoom._id)}>Join</button>
