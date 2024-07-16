@@ -54,9 +54,16 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
+export const logoutUser = () => (dispatch) => {
+  dispatch(logout());
+  sessionStorage.removeItem("token");
+  localStorage.removeItem("token");
+};
+
 const initialState = {
   user: null,
-  token: null,
+  token:
+    sessionStorage.getItem("token") || localStorage.getItem("token") || null,
   loading: false,
   error: null,
   success: false,
@@ -71,8 +78,6 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      sessionStorage.setItem("token", null);
-      localStorage.setItem("token", null);
     },
   },
   extraReducers: (builder) => {
