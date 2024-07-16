@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchChatrooms, fetchUserChatrooms } from "../features/chat/chatSlice";
 import ChatRoom from "../components/Chatroom";
+import CreateChatroom from "../components/CreateChatroom";
 
 export const Chatrooms = () => {
   const dispatch = useDispatch();
-  const { chatrooms, userChatrooms, loading } = useSelector(
+  const { chatrooms, userChatrooms, loading, error } = useSelector(
     (state) => state.chat
   );
 
@@ -15,6 +16,7 @@ export const Chatrooms = () => {
   }, [dispatch]);
 
   if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
@@ -31,6 +33,7 @@ export const Chatrooms = () => {
           <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))}
       </div>
+      <CreateChatroom />
     </div>
   );
 };
