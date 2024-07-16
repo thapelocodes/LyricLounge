@@ -22,23 +22,13 @@ export const Chatrooms = () => {
       <div>
         <h2>Your Chatrooms</h2>
         {userChatrooms.map((chatRoom) => (
-          <ChatRoom
-            key={chatRoom._id}
-            chatRoom={chatRoom}
-            onJoin={() => {}}
-            onLeave={() => {}}
-          />
+          <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))}
       </div>
       <div>
         <h2>Public Chatrooms</h2>
         {chatrooms.map((chatRoom) => (
-          <ChatRoom
-            key={chatRoom._id}
-            chatRoom={chatRoom}
-            onJoin={() => {}}
-            onLeave={() => {}}
-          />
+          <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))}
       </div>
     </div>

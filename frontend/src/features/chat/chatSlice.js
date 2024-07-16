@@ -30,22 +30,12 @@ export const joinChatroom = createAsyncThunk(
   async (chatroomId, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.token;
-    const user = state.auth.user;
-    const chatrooms = state.chat.chatrooms;
-    const chatroom = chatrooms.find((c) => c._id === chatroomId);
+
     try {
       const response = await axios.post(`/api/chats/${chatroomId}/join`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Chatroom updated: ", response.data);
-      if (
-        !user.chatrooms.includes(chatroomId) &&
-        !chatroom.users.includes(user._id)
-      ) {
-        user.chatrooms.push(chatroomId);
-        chatroom.users.push(user._id);
-      }
-      return { chatroom };
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -57,9 +47,6 @@ export const leaveChatroom = createAsyncThunk(
   async (chatroomId, { getState, rejectWithValue }) => {
     const state = getState();
     const token = state.auth.token;
-    const user = state.auth.user;
-    const chatrooms = state.chat.chatrooms;
-    const chatroom = chatrooms.find((c) => c._id === chatroomId);
     try {
       const response = await axios.post(
         `/api/chats/${chatroomId}/leave`,
@@ -68,10 +55,7 @@ export const leaveChatroom = createAsyncThunk(
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("Chatroom updated: ", response.data);
-      user.chatrooms = user.chatrooms.filter((id) => id !== chatroomId);
-      chatroom.users = chatroom.users.filter((id) => id !== user._id);
-      return { chatroom };
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -124,7 +108,7 @@ const chatSlice = createSlice({
         state.error = null;
       })
       .addCase(joinChatroom.fulfilled, (state, action) => {
-        const { chatroom } = action.payload;
+        const chatroom = action.payload;
         state.userChatrooms.push(chatroom);
         state.chatrooms = state.chatrooms.map((c) =>
           c._id === chatroom._id ? chatroom : c
@@ -140,7 +124,7 @@ const chatSlice = createSlice({
         state.error = null;
       })
       .addCase(leaveChatroom.fulfilled, (state, action) => {
-        const { chatroom } = action.payload;
+        const chatroom = action.payload;
         state.userChatrooms = state.userChatrooms.filter(
           (c) => c._id !== chatroom._id
         );
