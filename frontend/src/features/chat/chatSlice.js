@@ -227,5 +227,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { resetChat } = chatSlice.actions;
+export const { resetChat, setOpenChatroom } = chatSlice.actions;
 export default chatSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { joinChatroom, leaveChatroom } from "../features/chat/chatSlice";
+import { joinChatroom, leaveChatroom, set } from "../features/chat/chatSlice";
 
 const ChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
