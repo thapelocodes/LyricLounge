@@ -118,6 +118,7 @@ const initialState = {
   chatrooms: [],
   userChatrooms: [],
   messages: {},
+  openChatroomId: null,
   loading: false,
   error: null,
 };
@@ -130,6 +131,9 @@ const chatSlice = createSlice({
       state.chatrooms = [];
       state.userChatrooms = [];
       state.error = null;
+    },
+    setOpenChatroom: (state, action) => {
+      state.openChatroomId = action.payload;
     },
   },
   extraReducers: (builder) => {
