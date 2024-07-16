@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { joinChatroom, leaveChatroom } from "../features/chat/chatSlice";
 
@@ -12,6 +12,8 @@ const ChatRoom = ({ chatRoom }) => {
   const onLeave = (chatroomId) => {
     dispatch(leaveChatroom(chatroomId));
   };
+
+  useEffect(() => {}, [userChatrooms]);
 
   return (
     <div>
