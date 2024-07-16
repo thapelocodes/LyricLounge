@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchChatrooms, fetchUserChatrooms } from "../features/chat/chatSlice";
 import ChatRoom from "../components/Chatroom";
 import CreateChatroom from "../components/CreateChatroom";
+import OpenChatRoom from "../components/OpenChatroom";
 
 export const Chatrooms = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ export const Chatrooms = () => {
           <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))}
       </div>
+      <OpenChatRoom />
       <div>
         <h2>Public Chatrooms</h2>
         {chatrooms.map((chatRoom) => (
