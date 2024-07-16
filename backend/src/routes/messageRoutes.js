@@ -7,7 +7,9 @@ const { authMiddleware } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.get("/:chatroomId", authMiddleware, getChatHistroy);
-router.post("/", authMiddleware, sendMessage);
+router
+  .route("/:chatroomId")
+  .get(authMiddleware, getChatHistroy)
+  .post(authMiddleware, sendMessage);
 
 module.exports = router;
