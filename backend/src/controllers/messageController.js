@@ -20,8 +20,16 @@ const sendMessage = async (req, res) => {
       chatroomId,
       sender,
       content,
+      isSent: true,
     });
     await message.save();
+
+    req.wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(message));
+      }
+    });
+
     res.status(201).json(message);
   } catch (error) {
     console.error(error);
