@@ -5,7 +5,7 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
-const { authMiddleware } = require("./middleware/authMiddleware");
+const { authMiddleware, verifyToken } = require("./middleware/authMiddleware");
 require("dotenv").config();
 
 const app = express();
@@ -22,29 +22,53 @@ app.use("/api/chats", chatRoutes);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const clients = new Map();
+
+wss.on("connection", (ws, req) => {
+  ws.on("message", async (message) => {
+    try {
+      const { token, type, data } = JSON.parse(message);
+      const user = await verifyToken(token);
+      if (!user) {
+        ws.close();
+        return;
+      }
+      if (type === "authenticate") {
+        console.log("New client connected:", user.username);
+        clients.set(user._id.toString(), ws);
+      }
+      if (type === "chatMessage") {
+        console.log("New message from:", user.username);
+        console.log("Message:", data);
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(data));
+          }
+        });
+      }
+    } catch (error) {
+      console.error("WebSocket error:", error);
+    }
+  });
+
+  ws.on("close", () => {
+    for (const [key, value] of clients.entries()) {
+      if (value === ws) {
+        clients.delete(key);
+        break;
+      }
+    }
+    console.log("Client disconnected:", key);
+  });
+});
 
 app.use((req, res, next) => {
   req.wss = wss;
+  req.clients = clients;
   next();
 });
 
 app.use("/api/messages", messageRoutes);
-
-wss.on("connection", (ws) => {
-  console.log("New client connected");
-  ws.on("message", (message) => {
-    console.log("Received:", message);
-    wss.clients.forEach((client) => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
-  });
-
-  ws.on("close", () => {
-    console.log("Client disconnected");
-  });
-});
 
 console.log("WebSocket server is running");
 
