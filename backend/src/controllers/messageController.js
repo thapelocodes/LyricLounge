@@ -14,7 +14,7 @@ const getChatHistroy = async (req, res) => {
 
 const sendMessage = async (req, res) => {
   const { chatroomId, content } = req.body;
-  const sender = req.user.username;
+  const sender = req.user._id;
   try {
     const message = new Message({
       chatroomId,

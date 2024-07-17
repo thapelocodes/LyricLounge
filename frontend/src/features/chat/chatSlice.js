@@ -94,6 +94,7 @@ export const fetchChatHistory = createAsyncThunk(
     const response = await axios.get(`/api/messages/${chatroomId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("Fetching chat history...");
     return { chatroomId, messages: response.data };
   }
 );
@@ -104,8 +105,8 @@ export const sendMessage = createAsyncThunk(
     const state = getState();
     const token = state.auth.token;
     const response = await axios.post(
-      `/api/messages/${chatroomId}`,
-      { content },
+      `/api/messages/`,
+      { chatroomId, content },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -209,18 +210,22 @@ const chatSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchChatHistory.pending, (state) => {
+        console.log("Fetching chat history...");
         state.loading = true;
       })
       .addCase(fetchChatHistory.fulfilled, (state, action) => {
         const { chatroomId, messages } = action.payload;
         state.messages[chatroomId] = messages;
         state.loading = false;
+        console.log("Chat history fetched!");
       })
       .addCase(fetchChatHistory.rejected, (state, action) => {
+        console.log("Error fetching chat history...");
         state.error = action.error.message;
         state.loading = false;
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
+        console.log("Message sent!");
         const message = action.payload;
         state.messages[message.chatroomId].push(message);
       });

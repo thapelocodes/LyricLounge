@@ -18,10 +18,16 @@ app.get("/health", (req, res) => {
 });
 app.use("/api/users", userRoutes);
 app.use("/api/chats", chatRoutes);
-app.use("/api/messages", messageRoutes);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+
+app.use((req, res, next) => {
+  req.wss = wss;
+  next();
+});
+
+app.use("/api/messages", messageRoutes);
 
 wss.on("connection", (ws) => {
   console.log("New client connected");

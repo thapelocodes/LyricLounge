@@ -7,9 +7,8 @@ import OpenChatRoom from "../components/OpenChatroom";
 
 export const Chatrooms = () => {
   const dispatch = useDispatch();
-  const { chatrooms, userChatrooms, loading, error } = useSelector(
-    (state) => state.chat
-  );
+  const { chatrooms, userChatrooms, loading, error, openChatroomId } =
+    useSelector((state) => state.chat);
 
   useEffect(() => {
     dispatch(fetchChatrooms());
@@ -18,6 +17,10 @@ export const Chatrooms = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
+
+  const openChatroom =
+    chatrooms.find((c) => c._id === openChatroomId) ||
+    userChatrooms.find((c) => c._id === openChatroomId);
 
   return (
     <div>
@@ -28,7 +31,9 @@ export const Chatrooms = () => {
           <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
         ))}
       </div>
-      <OpenChatRoom />
+      {openChatroomId && openChatroom && (
+        <OpenChatRoom chatRoom={openChatroom} />
+      )}
       <div>
         <h2>Public Chatrooms</h2>
         {chatrooms.map((chatRoom) => (
