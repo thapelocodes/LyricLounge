@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const { authMiddleware } = require("./middleware/authMiddleware");
 require("dotenv").config();
 
 const app = express();
