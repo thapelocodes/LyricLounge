@@ -4,6 +4,7 @@ import {
   joinChatroom,
   leaveChatroom,
   setOpenChatroom,
+  fetchChatHistory,
 } from "../features/chat/chatSlice";
 
 const ChatRoom = ({ chatRoom }) => {
@@ -18,6 +19,7 @@ const ChatRoom = ({ chatRoom }) => {
   };
   const onOpen = (chatroomId) => {
     dispatch(setOpenChatroom(chatroomId));
+    dispatch(fetchChatHistory(chatroomId));
   };
 
   return (

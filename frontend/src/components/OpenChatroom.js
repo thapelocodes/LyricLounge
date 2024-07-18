@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchChatHistory, sendMessage } from "../features/chat/chatSlice";
+import { sendMessage } from "../features/chat/chatSlice";
 
 const OpenChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
   const messages =
     useSelector((state) => state.chat.messages[chatRoom._id]) || [];
   const [content, setContent] = useState("");
-
-  const handleFetchChatHistory = () => {
-    dispatch(fetchChatHistory(chatRoom._id));
-  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -19,7 +15,7 @@ const OpenChatRoom = ({ chatRoom }) => {
   };
 
   return (
-    <div onLoad={handleFetchChatHistory}>
+    <div>
       <h3>{chatRoom.name}</h3>
       <div>
         {messages.map((message) => (
