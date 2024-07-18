@@ -16,7 +16,8 @@ export const WebSocketProvider = ({ children }) => {
 
       newSocket.onmessage = (e) => {
         const newMessage = e.data;
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        if (newMessage.type === "chatMessage")
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
       };
 
       newSocket.onclose = () => setSocket(null);
@@ -28,7 +29,14 @@ export const WebSocketProvider = ({ children }) => {
   }, [token, socket]);
 
   const sendMessage = (message) => {
-    if (socket) socket.send(JSON.stringify(message));
+    if (socket) {
+      const chatMessage = {
+        token,
+        type: "chatMessage",
+        data: message,
+      };
+      socket.send(JSON.stringify(chatMessage));
+    }
   };
 
   return (
