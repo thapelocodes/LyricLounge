@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   joinChatroom,
@@ -19,8 +19,6 @@ const ChatRoom = ({ chatRoom }) => {
   const onOpen = (chatroomId) => {
     dispatch(setOpenChatroom(chatroomId));
   };
-
-  useEffect(() => {}, [userChatrooms]);
 
   return (
     <div>

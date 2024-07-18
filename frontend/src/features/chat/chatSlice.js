@@ -214,20 +214,29 @@ const chatSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchChatHistory.fulfilled, (state, action) => {
+        state.loading = false;
         const { chatroomId, messages } = action.payload;
         state.messages[chatroomId] = messages;
-        state.loading = false;
         console.log("Chat history fetched!");
       })
       .addCase(fetchChatHistory.rejected, (state, action) => {
         console.log("Error fetching chat history...");
-        state.error = action.error.message;
         state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(sendMessage.pending, (state) => {
+        state.loading = true;
+        console.log("Sending message...");
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         console.log("Message sent!");
         const message = action.payload;
         state.messages[message.chatroomId].push(message);
+        state.loading = false;
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
