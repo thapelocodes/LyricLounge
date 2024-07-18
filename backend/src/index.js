@@ -25,16 +25,19 @@ const wss = new WebSocket.Server({ server });
 const clients = new Map();
 
 wss.on("connection", (ws, req) => {
+  console.log("New client connected");
   ws.on("message", async (message) => {
     try {
+      console.log("Received message:", message);
       const { token, type, data } = JSON.parse(message);
       const user = await verifyToken(token);
       if (!user) {
+        console.log("Invalid token, closing connection");
         ws.close();
         return;
       }
       if (type === "authenticate") {
-        console.log("New client connected:", user.username);
+        console.log("Client authenticated:", user.username);
         clients.set(user._id.toString(), ws);
       }
       if (type === "chatMessage") {
@@ -55,10 +58,10 @@ wss.on("connection", (ws, req) => {
     for (const [key, value] of clients.entries()) {
       if (value === ws) {
         clients.delete(key);
+        console.log("Client disconnected:", key);
         break;
       }
     }
-    console.log("Client disconnected:", key);
   });
 });
 
