@@ -1,20 +1,34 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import socket from "../utils/websocket";
+import { useSelector } from "react-redux";
+import createWebSocket from "../utils/websocket";
 
 const WebSocketContext = createContext();
 
 export const WebSocketProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    socket.onmessage = (e) => {
-      const newMessage = JSON.parse(e.data);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
-  }, []);
+    if (token && !socket) {
+      const newSocket = createWebSocket(token);
+      setSocket(newSocket);
+
+      newSocket.onmessage = (e) => {
+        const newMessage = e.data;
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      };
+
+      newSocket.onclose = () => setSocket(null);
+
+      return () => {
+        if (newSocket.readyState === WebSocket.OPEN) newSocket.close();
+      };
+    }
+  }, [token, socket]);
 
   const sendMessage = (message) => {
-    socket.send(JSON.stringify(message));
+    if (socket) socket.send(JSON.stringify(message));
   };
 
   return (
