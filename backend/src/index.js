@@ -6,6 +6,8 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const { authMiddleware, verifyToken } = require("./middleware/authMiddleware");
+const { timeStamp } = require("console");
+const Message = require("./models/Message");
 require("dotenv").config();
 
 const app = express();
@@ -39,15 +41,26 @@ wss.on("connection", (ws, req) => {
       if (type === "authenticate") {
         console.log("Client authenticated:", user.username);
         clients.set(user._id.toString(), ws);
-      }
-      if (type === "chatMessage") {
-        console.log("New message from:", user.username);
-        console.log("Message:", data);
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(data));
-          }
-        });
+        ws.user = user;
+      } else if (ws.user) {
+        if (type === "chatMessage") {
+          console.log("New message from:", user.username);
+          console.log("Message:", data);
+
+          wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN && client.user) {
+              client.send(
+                JSON.stringify({
+                  type: "chatMessage",
+                  data: data,
+                })
+              );
+            }
+          });
+        }
+      } else {
+        console.log("Unauthenticated message, closing connection");
+        ws.close();
       }
     } catch (error) {
       console.error("WebSocket error:", error);
