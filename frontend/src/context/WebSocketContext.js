@@ -15,7 +15,7 @@ export const WebSocketProvider = ({ children }) => {
       setSocket(newSocket);
 
       newSocket.onmessage = (e) => {
-        const newMessage = e.data;
+        const newMessage = JSON.parse(e.data);
         if (newMessage.type === "chatMessage")
           setMessages((prevMessages) => [...prevMessages, newMessage]);
       };
