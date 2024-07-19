@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import createWebSocket from "../utils/websocket";
+import { addMessage } from "../features/chat/chatSlice";
 
 const WebSocketContext = createContext();
 
@@ -8,6 +9,7 @@ export const WebSocketProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
   const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (token && !socket) {
@@ -16,8 +18,15 @@ export const WebSocketProvider = ({ children }) => {
 
       newSocket.onmessage = (e) => {
         const newMessage = JSON.parse(e.data);
-        if (newMessage.type === "chatMessage")
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        if (newMessage.type === "chatMessage") {
+          setMessages((prevMessages) => [...prevMessages, newMessage.data]);
+          dispatch(
+            addMessage({
+              chatroomId: newMessage.data.chatroom,
+              message: newMessage.data,
+            })
+          );
+        }
       };
 
       newSocket.onclose = () => setSocket(null);
@@ -26,7 +35,7 @@ export const WebSocketProvider = ({ children }) => {
         if (newSocket.readyState === WebSocket.OPEN) newSocket.close();
       };
     }
-  }, [token, socket]);
+  }, [token, socket, dispatch]);
 
   const sendMessage = (message) => {
     if (socket) {
