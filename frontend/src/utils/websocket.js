@@ -7,7 +7,8 @@ const createWebSocket = (token) => {
   };
 
   socket.onmessage = (e) => {
-    console.log(`Message from server: ${e.data}`);
+    const message = JSON.parse(e.data);
+    console.log(`Message from server: ${message}`);
   };
 
   socket.onclose = () => {
