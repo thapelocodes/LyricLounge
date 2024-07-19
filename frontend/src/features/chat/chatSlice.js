@@ -136,6 +136,13 @@ const chatSlice = createSlice({
     setOpenChatroom: (state, action) => {
       state.openChatroomId = action.payload;
     },
+    addMessage: (state, action) => {
+      const { chatroomId, message } = action.payload;
+      if (!state.messages[chatroomId]) {
+        state.messages[chatroomId] = [];
+      }
+      state.messages[chatroomId].push(message);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -241,5 +248,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { resetChat, setOpenChatroom } = chatSlice.actions;
+export const { resetChat, setOpenChatroom, addMessage } = chatSlice.actions;
 export default chatSlice.reducer;
