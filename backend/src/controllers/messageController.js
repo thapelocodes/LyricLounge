@@ -1,5 +1,4 @@
 const Message = require("../models/Message");
-const WebSocket = require("ws");
 
 const getChatHistroy = async (req, res) => {
   try {
@@ -24,12 +23,6 @@ const sendMessage = async (req, res) => {
       isSent: true,
     });
     await message.save();
-
-    req.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message.content);
-      }
-    });
 
     res.status(201).json(message);
   } catch (error) {
