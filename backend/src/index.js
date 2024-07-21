@@ -5,7 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const WebSocket = require("ws");
-const { authMiddleware, verifyToken } = require("./middleware/authMiddleware");
+const { verifyToken } = require("./middleware/authMiddleware");
 require("dotenv").config();
 
 const app = express();
@@ -50,7 +50,7 @@ wss.on("connection", (ws) => {
           type: "chatMessage",
           data: {
             chatroomId: data.chatroomId,
-            sender: user._id,
+            sender: user.username,
             content: data.content,
             timestamp: new Date(),
           },

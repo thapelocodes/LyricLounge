@@ -9,13 +9,13 @@ const OpenChatRoom = ({ chatRoom }) => {
     useSelector((state) => state.chat.messages[chatRoom._id]) || [];
   const [content, setContent] = useState("");
   const { sendMessage: sendWebSocketMessage } = useWebSocket();
-  const userId = useSelector((state) => state.auth.user._id);
+  const username = useSelector((state) => state.auth.user.username);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     const message = {
       chatroomId: chatRoom._id,
-      sender: userId,
+      sender: username,
       content,
       timestamp: new Date(),
     };

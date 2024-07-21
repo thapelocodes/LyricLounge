@@ -1,4 +1,5 @@
 const Message = require("../models/Message");
+const User = require("../models/User");
 
 const getChatHistroy = async (req, res) => {
   try {
@@ -14,11 +15,12 @@ const getChatHistroy = async (req, res) => {
 
 const sendMessage = async (req, res) => {
   const { chatroomId, content } = req.body;
-  const sender = req.user._id;
+  const senderId = req.user._id;
   try {
+    const user = await User.findById(senderId).select("username");
     const message = new Message({
       chatroomId,
-      sender,
+      sender: user.username,
       content,
       isSent: true,
     });
