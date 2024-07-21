@@ -137,7 +137,9 @@ const chatSlice = createSlice({
       state.openChatroomId = action.payload;
     },
     addMessage: (state, action) => {
-      const { chatroomId, message } = action.payload;
+      console.log("Add message action payload:", action.payload);
+      const message = action.payload;
+      const chatroomId = message.chatroomId;
       if (!state.messages[chatroomId]) {
         state.messages[chatroomId] = [];
       }
@@ -231,8 +233,7 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(sendMessage.pending, (state) => {
-        state.loading = true;
+      .addCase(sendMessage.pending, () => {
         console.log("Sending message...");
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
