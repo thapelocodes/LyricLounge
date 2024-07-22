@@ -4,7 +4,13 @@ const User = require("../models/User");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "90d",
+    expiresIn: "15m",
+  });
+};
+
+const generateRefreshToken = (id) => {
+  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "30d",
   });
 };
 
@@ -46,18 +52,48 @@ const loginUser = async (req, res) => {
     const user = isEmail
       ? await User.findOne({ email: login })
       : await User.findOne({ username: login });
+
     if (user && (await bcrypt.compare(password, user.password))) {
+      const token = generateToken(user._id);
+      const refreshToken = generateRefreshToken(user._id);
+
+      user.refreshToken = refreshToken;
+      await user.save();
+
       res.json({
-        _id: user.id,
+        _id: user._id,
         username: user.username,
         email: user.email,
-        token: generateToken(user._id),
+        token,
+        refreshToken,
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const refreshToken = async (req, res) => {
+  const { refreshToken } = req.body;
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (user && user.refreshToken === refreshToken) {
+      const newToken = generateToken(user._id);
+      const newRefreshToken = generateRefreshToken(user._id);
+
+      user.refreshToken = newRefreshToken;
+      await user.save();
+
+      res.json({ token: newToken, refreshToken: newRefreshToken });
+    } else {
+      res.status(401).json({ message: "Invalid refresh token" });
+    }
+  } catch (error) {
+    res.status(401).json({ message: "Invalid refresh token" });
   }
 };
 
@@ -98,4 +134,10 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, fetchUserProfile, updateProfile };
+module.exports = {
+  registerUser,
+  loginUser,
+  refreshToken,
+  fetchUserProfile,
+  updateProfile,
+};
