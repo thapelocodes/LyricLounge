@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendMessage } from "../features/chat/chatSlice";
+import { setOpenChatroom, sendMessage } from "../features/chat/chatSlice";
 import { useWebSocket } from "../context/WebSocketContext";
 
 const OpenChatRoom = ({ chatRoom }) => {
@@ -24,9 +24,12 @@ const OpenChatRoom = ({ chatRoom }) => {
     setContent("");
   };
 
+  const handleCloseChatroom = () => dispatch(setOpenChatroom(null));
+
   return (
     <div>
       <h3>{chatRoom.name}</h3>
+      <button onClick={handleCloseChatroom}>Close</button>
       <div>
         {messages.map((message) =>
           message && message.sender && message.content ? (

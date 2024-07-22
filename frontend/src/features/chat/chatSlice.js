@@ -129,21 +129,31 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     resetChat: (state) => {
-      state.chatrooms = [];
-      state.userChatrooms = [];
-      state.error = null;
+      return {
+        ...state,
+        chatrooms: [],
+        userChatrooms: [],
+        error: null,
+        openChatroomId: null,
+      };
     },
     setOpenChatroom: (state, action) => {
-      state.openChatroomId = action.payload;
+      return {
+        ...state,
+        openChatroomId: action.payload,
+      };
     },
     addMessage: (state, action) => {
       console.log("Add message action payload:", action.payload);
       const message = action.payload;
       const chatroomId = message.chatroomId;
-      if (!state.messages[chatroomId]) {
-        state.messages[chatroomId] = [];
-      }
-      state.messages[chatroomId].push(message);
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          [chatroomId]: [...(state.messages[chatroomId] || []), message],
+        },
+      };
     },
   },
   extraReducers: (builder) => {
