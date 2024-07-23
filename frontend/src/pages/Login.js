@@ -47,7 +47,7 @@ export const Login = () => {
         placeholder="Password"
         required
       />
-      {error && <p>{error}</p>}
+      {error && <p>{error.message}</p>}
       <button type="submit" disabled={loading}>
         Login
       </button>
