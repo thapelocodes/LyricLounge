@@ -61,4 +61,3 @@ export const WebSocketProvider = ({ children }) => {
 };
 
 export const useWebSocket = () => useContext(WebSocketContext);
-export { message };
