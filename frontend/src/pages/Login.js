@@ -38,6 +38,7 @@ export const Login = () => {
         onChange={onChange}
         placeholder="Email or Username"
         required
+        autoComplete="current-login"
       />
       <input
         type="password"
@@ -46,6 +47,7 @@ export const Login = () => {
         onChange={onChange}
         placeholder="Password"
         required
+        autoComplete="current-password"
       />
       {error && <p>{error}</p>}
       <button type="submit" disabled={loading}>

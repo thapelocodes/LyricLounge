@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProfile, updateProfile } from "../features/auth/authSlice";
-import { setProfile } from "../features/profile/profileSlice";
+import {
+  fetchProfile,
+  updateProfile,
+  setProfile,
+} from "../features/profile/profileSlice";
 import { ProfileForm } from "../components/ProfileForm";
 import { validateProfileForm } from "../utils/validation";
 

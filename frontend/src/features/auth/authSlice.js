@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import api from "../../utils/api";
 
 const refreshAuthToken = async () => {
   try {
@@ -43,30 +42,6 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-export const updateProfile = createAsyncThunk(
-  "auth/updateProfile",
-  async (formData, { rejectWithValue }) => {
-    try {
-      const { data } = await api.put("/users/profile", formData);
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchProfile = createAsyncThunk(
-  "auth/fetchProfile",
-  async (_, { rejectWithValue }) => {
-    try {
-      const { data } = await api.get("/users/profile");
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
   sessionStorage.removeItem("token");
@@ -77,18 +52,12 @@ export const logoutUser = () => (dispatch) => {
 
 export const refreshToken = createAsyncThunk(
   "auth/refreshToken",
-  async (_, { dispatch, getState, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const { refreshToken } = getState().auth;
-      const response = await refreshAuthToken(refreshToken);
-      const { token, refreshToken: newRefreshToken } = response;
+      const response = await refreshAuthToken();
+      const { token: newToken, refreshToken: newRefreshToken } = response;
 
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("refreshToken", newRefreshToken);
-      localStorage.setItem("token", token);
-      localStorage.setItem("refreshToken", newRefreshToken);
-
-      return { token, refreshToken: newRefreshToken };
+      return { token: newToken, refreshToken: newRefreshToken };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -96,7 +65,10 @@ export const refreshToken = createAsyncThunk(
 );
 
 const initialState = {
-  user: null,
+  user:
+    sessionStorage.getItem("profile") ||
+    localStorage.getItem("profile") ||
+    null,
   token:
     sessionStorage.getItem("token") || localStorage.getItem("token") || null,
   refreshToken:
@@ -106,7 +78,10 @@ const initialState = {
   loading: false,
   error: null,
   success: false,
-  isAuthenticated: false,
+  isAuthenticated:
+    (!!sessionStorage.getItem("token") &&
+      !!sessionStorage.getItem("refreshToken")) ||
+    (!!localStorage.getItem("token") && !!localStorage.getItem("refreshToken")),
 };
 
 const authSlice = createSlice({
@@ -157,30 +132,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
-      })
-      .addCase(updateProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(updateProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(fetchProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(fetchProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       })
       .addCase(refreshToken.pending, (state) => {
         state.loading = true;

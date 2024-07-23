@@ -42,6 +42,7 @@ export const Register = () => {
         onChange={onChange}
         placeholder="Username"
         required
+        autoComplete="new-username"
       />
       <input
         type="email"
@@ -50,6 +51,7 @@ export const Register = () => {
         onChange={onChange}
         placeholder="Email"
         required
+        autoComplete="new-email"
       />
       <input
         type="password"
@@ -58,6 +60,7 @@ export const Register = () => {
         onChange={onChange}
         placeholder="Password"
         required
+        autoComplete="new-password"
       />
       <input
         type="password"
@@ -66,6 +69,7 @@ export const Register = () => {
         onChange={onChange}
         placeholder="Confirm Password"
         required
+        autoComplete="new-password"
       />
       {error && <p>{error}</p>}
       <button type="submit" disabled={loading}>

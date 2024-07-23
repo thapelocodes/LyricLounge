@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+require("dotenv").config();
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -57,6 +58,14 @@ const loginUser = async (req, res) => {
       const token = generateToken(user._id);
       const refreshToken = generateRefreshToken(user._id);
 
+      console.log(
+        "Token and refresh token respectively: ",
+        token,
+        ", ",
+        refreshToken
+      );
+
+      user.token = token;
       user.refreshToken = refreshToken;
       await user.save();
 
