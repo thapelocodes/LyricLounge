@@ -2,13 +2,38 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenChatroom, sendMessage } from "../features/chat/chatSlice";
 import { useWebSocket } from "../context/WebSocketContext";
-import { Box, Typography, TextField, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const MessageBox = styled(Box)(({ theme }) => ({
   maxHeight: 400,
   overflowY: "auto",
   marginBottom: theme.spacing(2),
+}));
+
+const MessageCard = styled(Card)(({ theme, owner }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignSelf: owner ? "flex-end" : "flex-start",
+  maxWidth: "80%",
+  marginBottom: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const SenderName = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  marginBottom: theme.spacing(0.5),
+}));
+
+const MessageContent = styled(Typography)(({ theme }) => ({
+  fontWeight: 200,
 }));
 
 const OpenChatRoom = ({ chatRoom }) => {
@@ -34,6 +59,11 @@ const OpenChatRoom = ({ chatRoom }) => {
 
   const handleCloseChatroom = () => dispatch(setOpenChatroom(null));
 
+  const formatter = new Intl.DateTimeFormat("en", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+
   return (
     <Box>
       <Typography variant="h6">{chatRoom.name}</Typography>
@@ -43,15 +73,16 @@ const OpenChatRoom = ({ chatRoom }) => {
       <MessageBox>
         {messages.map((message) =>
           message && message.sender && message.content ? (
-            <Box key={message._id} mb={1}>
-              <Typography variant="body2">
-                {message.sender}: {message.content}{" "}
-                <small>
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </small>
-                {message.isEdited && <small> (edited)</small>}
-              </Typography>
-            </Box>
+            <MessageCard key={message._id} owner={message.sender === username}>
+              <CardContent>
+                <SenderName variant="body2">{message.sender}</SenderName>
+                <MessageContent variant="body2">
+                  {message.content}{" "}
+                  <small>{formatter.format(new Date(message.timestamp))}</small>
+                  {message.isEdited && <small> (edited)</small>}
+                </MessageContent>
+              </CardContent>
+            </MessageCard>
           ) : (
             <Typography key={Math.random()} color="error">
               Invalid message format.
