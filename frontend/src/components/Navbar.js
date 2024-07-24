@@ -1,15 +1,20 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../features/auth/authSlice";
-import { clearProfile } from "../features/profile/profileSlice";
 import { Link } from "react-router-dom";
-import { AppBar, Toolbar, Button, Typography } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import LoginIcon from "@mui/icons-material/Lock";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
+import ChatIcon from "@mui/icons-material/Chat";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import { useSelector, useDispatch } from "react-redux";
 import { styled } from "@mui/material/styles";
+import { clearProfile } from "../features/profile/profileSlice";
+import { logoutUser } from "../features/auth/authSlice";
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  // position: "fixed",
-  zIndex: "10",
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
 }));
 
 export const Navbar = () => {
@@ -22,37 +27,37 @@ export const Navbar = () => {
   };
 
   return (
-    <StyledAppBar position="static">
-      <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          LyricLounge
-        </Typography>
-        <Button color="inherit" component={Link} to="/">
-          Home
-        </Button>
-        {isAuthenticated ? (
-          <>
-            <Button color="inherit" component={Link} to="/profile">
-              Profile
-            </Button>
-            <Button color="inherit" component={Link} to="/chat">
-              Chat
-            </Button>
-            <Button color="inherit" onClick={handleLogout}>
-              Logout
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button color="inherit" component={Link} to="/login">
-              Login
-            </Button>
-            <Button color="inherit" component={Link} to="/register">
-              Register
-            </Button>
-          </>
-        )}
-      </Toolbar>
-    </StyledAppBar>
+    <AppBar position="static">
+      <StyledToolbar>
+        <Typography variant="h6">LyricLounge</Typography>
+        <div>
+          <IconButton component={Link} to="/" color="inherit">
+            <HomeIcon />
+          </IconButton>
+          {isAuthenticated ? (
+            <>
+              <IconButton component={Link} to="/profile" color="inherit">
+                <PersonIcon />
+              </IconButton>
+              <IconButton component={Link} to="/chat" color="inherit">
+                <ChatIcon />
+              </IconButton>
+              <IconButton onClick={handleLogout} color="inherit">
+                <LogoutIcon />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <IconButton component={Link} to="/login" color="inherit">
+                <LoginIcon />
+              </IconButton>
+              <IconButton component={Link} to="/register" color="inherit">
+                <AppRegistrationIcon />
+              </IconButton>
+            </>
+          )}
+        </div>
+      </StyledToolbar>
+    </AppBar>
   );
 };
