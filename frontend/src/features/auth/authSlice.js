@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import api from "../../utils/api";
+import apiBase from "../../utils/api";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/users/login", formData);
-      console.log("Response:", response);
+      const response = await apiBase.post("/users/login", formData);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -21,7 +19,7 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/users/register", formData);
+      const response = await apiBase.post("/users/register", formData);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -36,7 +34,7 @@ export const updateProfile = createAsyncThunk(
   async (formData, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth.token;
-      const { data } = await api.put("/users/profile", formData, {
+      const { data } = await apiBase.put("/users/profile", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -53,7 +51,7 @@ export const fetchProfile = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth.token;
-      const { data } = await api.get("/users/profile", {
+      const { data } = await apiBase.get("/users/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       return data;
