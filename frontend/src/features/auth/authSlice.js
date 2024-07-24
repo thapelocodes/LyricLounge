@@ -7,6 +7,7 @@ export const loginUser = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post("/api/users/login", formData);
+      console.log("Response:", response);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -32,9 +33,14 @@ export const registerUser = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
-  async (formData, { rejectWithValue }) => {
+  async (formData, { rejectWithValue, getState }) => {
     try {
-      const { data } = await api.put("/users/profile", formData);
+      const token = getState().auth.token;
+      const { data } = await api.put("/users/profile", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -44,9 +50,12 @@ export const updateProfile = createAsyncThunk(
 
 export const fetchProfile = createAsyncThunk(
   "auth/fetchProfile",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
-      const { data } = await api.get("/users/profile");
+      const token = getState().auth.token;
+      const { data } = await api.get("/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -63,7 +72,10 @@ export const logoutUser = () => (dispatch) => {
 };
 
 const initialState = {
-  user: sessionStorage.getItem("user") || localStorage.getItem("user") || null,
+  user:
+    JSON.parse(sessionStorage.getItem("user")) ||
+    JSON.parse(localStorage.getItem("user")) ||
+    null,
   token:
     sessionStorage.getItem("token") || localStorage.getItem("token") || null,
   loading: false,
@@ -93,10 +105,15 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        console.log("Payload:", action.payload);
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        sessionStorage.setItem("user", action.payload);
-        localStorage.setItem("user", action.payload);
+        sessionStorage.setItem("user", JSON.stringify(action.payload));
+        localStorage.setItem("user", JSON.stringify(action.payload));
+        console.log(
+          "user stored in localStorage:",
+          JSON.parse(localStorage.getItem("user"))
+        );
         sessionStorage.setItem("token", action.payload.token);
         localStorage.setItem("token", action.payload.token);
       })
@@ -127,10 +144,13 @@ const authSlice = createSlice({
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        sessionStorage.setItem("user", JSON.stringify(action.payload));
+        localStorage.setItem("user", JSON.stringify(action.payload));
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        console.log("Error updating profile:", action.payload);
       })
       .addCase(fetchProfile.pending, (state) => {
         state.loading = true;

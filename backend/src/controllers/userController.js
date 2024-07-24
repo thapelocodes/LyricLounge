@@ -26,10 +26,11 @@ const registerUser = async (req, res) => {
     const user = await User.create({ username, email, password });
     if (user) {
       res.status(201).json({
-        _id: user.id,
+        _id: user._id,
         username: user.username,
         email: user.email,
         token: generateToken(user._id),
+        bio: user.bio,
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -48,10 +49,11 @@ const loginUser = async (req, res) => {
       : await User.findOne({ username: login });
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
-        _id: user.id,
+        _id: user._id,
         username: user.username,
         email: user.email,
         token: generateToken(user._id),
+        bio: user.bio,
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
