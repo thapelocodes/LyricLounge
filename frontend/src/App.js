@@ -8,7 +8,7 @@ import { Profile } from "./pages/Profile";
 import { Navbar } from "./components/Navbar";
 import { Chatrooms } from "./pages/Chatrooms";
 import { ThemeProvider } from "@mui/material/styles";
-import theme from "./styles/theme";
+import theme from "./theme/theme";
 
 export default function App() {
   return (
