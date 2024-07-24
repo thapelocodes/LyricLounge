@@ -3,6 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/auth/authSlice";
 import { clearProfile } from "../features/profile/profileSlice";
 import { Link } from "react-router-dom";
+import { AppBar, Toolbar, Button, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  // position: "fixed",
+  zIndex: "10",
+}));
 
 export const Navbar = () => {
   const dispatch = useDispatch();
@@ -14,36 +22,37 @@ export const Navbar = () => {
   };
 
   return (
-    <nav>
-      <ul>
-        <Link to="/">Home</Link>
-        <br />
+    <StyledAppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          LyricLounge
+        </Typography>
+        <Button color="inherit" component={Link} to="/">
+          Home
+        </Button>
         {isAuthenticated ? (
           <>
-            <>
-              <Link to="/profile">Profile</Link>
-            </>
-            <br />
-            <>
-              <Link to="/chat">Chat</Link>
-            </>
-            <br />
-            <>
-              <button onClick={handleLogout}>Logout</button>
-            </>
+            <Button color="inherit" component={Link} to="/profile">
+              Profile
+            </Button>
+            <Button color="inherit" component={Link} to="/chat">
+              Chat
+            </Button>
+            <Button color="inherit" onClick={handleLogout}>
+              Logout
+            </Button>
           </>
         ) : (
           <>
-            <>
-              <Link to="/login">Login</Link>
-            </>
-            <br />
-            <>
-              <Link to="/register">Register</Link>
-            </>
+            <Button color="inherit" component={Link} to="/login">
+              Login
+            </Button>
+            <Button color="inherit" component={Link} to="/register">
+              Register
+            </Button>
           </>
         )}
-      </ul>
-    </nav>
+      </Toolbar>
+    </StyledAppBar>
   );
 };

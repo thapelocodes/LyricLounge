@@ -2,6 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { TextField, Button, Typography, Container } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const FormContainer = styled(Container)(({ theme }) => ({
+  maxWidth: 400,
+  margin: "auto",
+  padding: theme.spacing(4),
+  textAlign: "center",
+}));
+
+const ErrorText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.error.main,
+  marginBottom: theme.spacing(2),
+}));
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -34,43 +48,65 @@ export const Register = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        name="username"
-        value={username}
-        onChange={onChange}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        value={email}
-        onChange={onChange}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        value={password}
-        onChange={onChange}
-        placeholder="Password"
-        required
-      />
-      <input
-        type="password"
-        name="confirmPassword"
-        value={confirmPassword}
-        onChange={onChange}
-        placeholder="Confirm Password"
-        required
-      />
-      {error && <p>{error}</p>}
-      <button type="submit" disabled={loading}>
+    <FormContainer>
+      <Typography variant="h4" gutterBottom>
         Register
-      </button>
-    </form>
+      </Typography>
+      <form onSubmit={onSubmit}>
+        <TextField
+          type="text"
+          name="username"
+          value={username}
+          onChange={onChange}
+          label="Username"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          type="email"
+          name="email"
+          value={email}
+          onChange={onChange}
+          label="Email"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          type="password"
+          name="password"
+          value={password}
+          onChange={onChange}
+          label="Password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          type="password"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={onChange}
+          label="Confirm Password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          required
+        />
+        {error && <ErrorText>{error}</ErrorText>}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading}
+        >
+          {loading ? "Registering..." : "Register"}
+        </Button>
+      </form>
+    </FormContainer>
   );
 };

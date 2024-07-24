@@ -1,4 +1,12 @@
 import React from "react";
+import { Box, TextField, Button, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const StyledForm = styled("form")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+}));
 
 export const ProfileForm = ({
   formData,
@@ -10,44 +18,64 @@ export const ProfileForm = ({
   hasChanges,
 }) => {
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
+    <StyledForm onSubmit={onSubmit}>
+      <TextField
         name="username"
+        label="Username"
         value={formData.username}
         onChange={onChange}
-        placeholder="Username"
+        variant="outlined"
       />
-      {errors.username && <p>{errors.username}</p>}
-      <input
-        type="email"
+      {errors.username && (
+        <Typography color="error">{errors.username}</Typography>
+      )}
+      <TextField
         name="email"
+        label="Email"
+        type="email"
         value={formData.email}
         onChange={onChange}
-        placeholder="Email"
+        variant="outlined"
       />
-      {errors.email && <p>{errors.email}</p>}
-      <input
-        type="text"
+      {errors.email && <Typography color="error">{errors.email}</Typography>}
+      <TextField
         name="profilePicture"
+        label="Profile Picture URL"
         value={formData.profilePicture}
         onChange={onChange}
-        placeholder="Profile Picture URL"
+        variant="outlined"
       />
-      {errors.profilePicture && <p>{errors.profilePicture}</p>}
-      <textarea
+      {errors.profilePicture && (
+        <Typography color="error">{errors.profilePicture}</Typography>
+      )}
+      <TextField
         name="bio"
+        label="Bio"
         value={formData.bio}
         onChange={onChange}
-        placeholder="Bio"
+        variant="outlined"
+        multiline
+        rows={4}
       />
-      {errors.bio && <p>{errors.bio}</p>}
-      <button type="submit" disabled={!hasChanges() || loading}>
-        Update Profile
-      </button>
-      <button type="button" onClick={() => setIsEditing(false)}>
-        Cancel
-      </button>
-    </form>
+      {errors.bio && <Typography color="error">{errors.bio}</Typography>}
+      <Box>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={!hasChanges() || loading}
+        >
+          Update Profile
+        </Button>
+        <Button
+          type="button"
+          variant="outlined"
+          color="secondary"
+          onClick={() => setIsEditing(false)}
+        >
+          Cancel
+        </Button>
+      </Box>
+    </StyledForm>
   );
 };

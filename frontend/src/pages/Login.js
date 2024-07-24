@@ -2,6 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { TextField, Button, Typography, Container } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const FormContainer = styled(Container)(({ theme }) => ({
+  maxWidth: 400,
+  margin: "auto",
+  padding: theme.spacing(4),
+  textAlign: "center",
+}));
+
+const ErrorText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.error.main,
+  marginBottom: theme.spacing(2),
+}));
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -30,27 +44,43 @@ export const Login = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        name="login"
-        value={login}
-        onChange={onChange}
-        placeholder="Email or Username"
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        value={password}
-        onChange={onChange}
-        placeholder="Password"
-        required
-      />
-      {error && <p>{error.message || error}</p>}
-      <button type="submit" disabled={loading}>
+    <FormContainer>
+      <Typography variant="h4" gutterBottom>
         Login
-      </button>
-    </form>
+      </Typography>
+      <form onSubmit={onSubmit}>
+        <TextField
+          type="text"
+          name="login"
+          value={login}
+          onChange={onChange}
+          label="Email or Username"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          type="password"
+          name="password"
+          value={password}
+          onChange={onChange}
+          label="Password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          required
+        />
+        {error && <ErrorText>{error.message || error}</ErrorText>}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </Button>
+      </form>
+    </FormContainer>
   );
 };

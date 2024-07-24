@@ -9,6 +9,7 @@ export const fetchChatrooms = createAsyncThunk(
     const response = await axios.get("/api/chats", {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("Public Chatrooms:", response.data);
     return response.data;
   }
 );

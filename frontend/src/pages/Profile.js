@@ -4,6 +4,40 @@ import { fetchProfile, updateProfile } from "../features/auth/authSlice";
 import { setProfile } from "../features/profile/profileSlice";
 import { ProfileForm } from "../components/ProfileForm";
 import { validateProfileForm } from "../utils/validation";
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Box,
+  Avatar,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+// Custom styled components
+const StyledContainer = styled(Container)(({ theme }) => ({
+  padding: theme.spacing(4),
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(2),
+  },
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  maxWidth: 600,
+  margin: "auto",
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  width: 100,
+  height: 100,
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+}));
 
 export const Profile = () => {
   const dispatch = useDispatch();
@@ -69,45 +103,61 @@ export const Profile = () => {
   };
 
   return (
-    <div>
-      <h2>Profile</h2>
-      {loading && <p>Loading...</p>}
+    <StyledContainer>
+      <Typography variant="h4" gutterBottom>
+        Profile
+      </Typography>
+      {loading && <Typography>Loading...</Typography>}
       {!loading && profile && (
-        <>
-          {!isEditing ? (
-            <div>
-              <p>Username: {user && user.username}</p>
-              <p>Email: {user && user.email}</p>
-              <p>
-                Profile Picture:{" "}
-                {user && user.profilePicture ? (
-                  <img src={user.profilePicture} alt="Profile" width="100px" />
-                ) : (
-                  <img
-                    src={require("../assets/profile-user_64572.png")}
+        <StyledCard>
+          <CardContent>
+            {!isEditing ? (
+              <>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <StyledAvatar
+                    src={
+                      user && user.profilePicture
+                        ? user.profilePicture
+                        : require("../assets/profile-user_64572.png")
+                    }
                     alt="Profile"
-                    width="100px"
                   />
+                  <Box ml={2}>
+                    <Typography variant="h6">
+                      {user && user.username}
+                    </Typography>
+                    <Typography variant="body1">
+                      {user && user.email}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {user && user.bio}
+                    </Typography>
+                  </Box>
+                </Box>
+                {user && (
+                  <StyledButton
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit Profile
+                  </StyledButton>
                 )}
-              </p>
-              <p>Bio: {user && user.bio}</p>
-              {user && (
-                <button onClick={() => setIsEditing(true)}>Edit Profile</button>
-              )}
-            </div>
-          ) : (
-            <ProfileForm
-              formData={formData}
-              onChange={onChange}
-              onSubmit={onSubmit}
-              setIsEditing={setIsEditing}
-              errors={errors}
-              loading={loading}
-              hasChanges={hasChanges}
-            />
-          )}
-        </>
+              </>
+            ) : (
+              <ProfileForm
+                formData={formData}
+                onChange={onChange}
+                onSubmit={onSubmit}
+                setIsEditing={setIsEditing}
+                errors={errors}
+                loading={loading}
+                hasChanges={hasChanges}
+              />
+            )}
+          </CardContent>
+        </StyledCard>
       )}
-    </div>
+    </StyledContainer>
   );
 };

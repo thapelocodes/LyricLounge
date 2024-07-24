@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createChatroom } from "../features/chat/chatSlice";
+import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+  maxWidth: 600,
+  margin: "auto",
+  padding: theme.spacing(2),
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+}));
 
 const CreateChatroom = () => {
   const [name, setName] = useState("");
@@ -14,34 +26,44 @@ const CreateChatroom = () => {
   };
 
   return (
-    <div>
-      <h2>Create a Chatroom</h2>
+    <StyledContainer>
+      <Typography variant="h4" gutterBottom>
+        Create a Chatroom
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
+        <Box mb={2}>
+          <TextField
+            label="Name"
+            variant="outlined"
+            fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
+        </Box>
+        <Box mb={2}>
+          <TextField
+            label="Description"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-        </div>
-        <button type="submit" disabled={loading}>
+        </Box>
+        <StyledButton
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={loading}
+        >
           {loading ? "Creating..." : "Create"}
-        </button>
+        </StyledButton>
+        {error && <Typography color="error">{error}</Typography>}
       </form>
-      {error && <p>{error}</p>}
-    </div>
+    </StyledContainer>
   );
 };
 

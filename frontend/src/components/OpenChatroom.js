@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenChatroom, sendMessage } from "../features/chat/chatSlice";
 import { useWebSocket } from "../context/WebSocketContext";
+import { Box, Typography, TextField, Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const MessageBox = styled(Box)(({ theme }) => ({
+  maxHeight: 400,
+  overflowY: "auto",
+  marginBottom: theme.spacing(2),
+}));
 
 const OpenChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
@@ -27,38 +35,43 @@ const OpenChatRoom = ({ chatRoom }) => {
   const handleCloseChatroom = () => dispatch(setOpenChatroom(null));
 
   return (
-    <div>
-      <h3>{chatRoom.name}</h3>
-      <button onClick={handleCloseChatroom}>Close</button>
-      <div>
+    <Box>
+      <Typography variant="h6">{chatRoom.name}</Typography>
+      <Button variant="outlined" color="error" onClick={handleCloseChatroom}>
+        Close
+      </Button>
+      <MessageBox>
         {messages.map((message) =>
           message && message.sender && message.content ? (
-            <div key={message._id}>
-              <p>
+            <Box key={message._id} mb={1}>
+              <Typography variant="body2">
                 {message.sender}: {message.content}{" "}
                 <small>
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </small>
-              </p>
-              {message.isEdited && <small>(edited)</small>}
-            </div>
+                {message.isEdited && <small> (edited)</small>}
+              </Typography>
+            </Box>
           ) : (
-            <p key={Math.random()} style={{ color: "red" }}>
+            <Typography key={Math.random()} color="error">
               Invalid message format.
-            </p>
+            </Typography>
           )
         )}
-      </div>
+      </MessageBox>
       <form onSubmit={handleSendMessage}>
-        <input
-          type="text"
+        <TextField
+          fullWidth
+          variant="outlined"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Type a message..."
         />
-        <button type="submit">Send</button>
+        <Button variant="contained" color="primary" type="submit">
+          Send
+        </Button>
       </form>
-    </div>
+    </Box>
   );
 };
 
