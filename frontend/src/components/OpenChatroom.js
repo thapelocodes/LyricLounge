@@ -9,6 +9,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardActions,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -19,12 +20,12 @@ const MessageBox = styled(Box)(({ theme }) => ({
 }));
 
 const MessageCard = styled(Card)(({ theme, owner }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: owner ? "flex-end" : "flex-start",
-  maxWidth: "80%",
+  maxWidth: "65%",
+  maxHeight: "100px",
   marginBottom: theme.spacing(1),
   borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(1),
+  backgroundColor: owner ? "#f0f0f0" : "#fefefe",
 }));
 
 const SenderName = styled(Typography)(({ theme }) => ({
@@ -34,6 +35,11 @@ const SenderName = styled(Typography)(({ theme }) => ({
 
 const MessageContent = styled(Typography)(({ theme }) => ({
   fontWeight: 200,
+}));
+
+const MessageTimestamp = styled(CardActions)(({ theme }) => ({
+  justifyContent: "flex-end",
+  padding: theme.spacing(1),
 }));
 
 const OpenChatRoom = ({ chatRoom }) => {
@@ -78,9 +84,13 @@ const OpenChatRoom = ({ chatRoom }) => {
                 <SenderName variant="body2">{message.sender}</SenderName>
                 <MessageContent variant="body2">
                   {message.content}{" "}
-                  <small>{formatter.format(new Date(message.timestamp))}</small>
                   {message.isEdited && <small> (edited)</small>}
                 </MessageContent>
+                <MessageTimestamp>
+                  <Typography variant="caption" color="textSecondary">
+                    {formatter.format(new Date(message.timestamp))}
+                  </Typography>
+                </MessageTimestamp>
               </CardContent>
             </MessageCard>
           ) : (

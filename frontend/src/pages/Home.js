@@ -18,6 +18,9 @@ export const Home = () => {
         <Typography variant="h4" gutterBottom>
           Welcome to LyricLounge
         </Typography>
+        <Typography variant="body1" gutterBottom>
+          Where music meets conversation
+        </Typography>
       </MainContainer>
       <Footer />
     </div>
