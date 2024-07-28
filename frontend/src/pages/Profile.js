@@ -51,6 +51,7 @@ export const Profile = () => {
   });
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     if (!profile) {
@@ -73,12 +74,17 @@ export const Profile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const onFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const hasChanges = () => {
     return (
       formData.username !== user.username ||
       formData.email !== user.email ||
       formData.profilePicture !== user.profilePicture ||
-      formData.bio !== user.bio
+      formData.bio !== user.bio ||
+      file
     );
   };
 
@@ -90,7 +96,19 @@ export const Profile = () => {
       return;
     }
     setErrors({});
-    dispatch(updateProfile(formData)).then((response) => {
+
+    console.log("file value:", file);
+    const updatedData = new FormData();
+    updatedData.append("username", formData.username);
+    updatedData.append("email", formData.email);
+    updatedData.append("bio", formData.bio);
+    if (file) updatedData.append("profilePicture", file);
+
+    for (let [key, value] of updatedData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    dispatch(updateProfile(updatedData)).then((response) => {
       if (!response.error) {
         setIsEditing(false);
         dispatch(fetchProfile()).then((response) => {
@@ -153,6 +171,7 @@ export const Profile = () => {
                 errors={errors}
                 loading={loading}
                 hasChanges={hasChanges}
+                onFileChange={onFileChange}
               />
             )}
           </CardContent>

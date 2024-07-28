@@ -6,6 +6,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const WebSocket = require("ws");
 const { verifyToken } = require("./middleware/authMiddleware");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/health", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });

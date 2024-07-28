@@ -2,7 +2,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const RefreshToken = require("../models/RefreshToken");
+const path = require("path");
 
+// Generate tokens
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "15m" });
 };
@@ -11,6 +13,7 @@ const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "30d" });
 };
 
+// Register user
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -37,6 +40,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+// Login user
 const loginUser = async (req, res) => {
   const { login, password } = req.body;
   try {
@@ -71,6 +75,7 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Refresh token
 const refreshToken = async (req, res) => {
   const { refreshToken: oldRefreshToken } = req.body;
   if (!oldRefreshToken) {
@@ -106,6 +111,7 @@ const refreshToken = async (req, res) => {
   }
 };
 
+// Fetch user profile
 const fetchUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -119,8 +125,12 @@ const fetchUserProfile = async (req, res) => {
   }
 };
 
+// Update user profile
 const updateProfile = async (req, res) => {
-  const { username, email, profilePicture, bio } = req.body;
+  const { username, email, bio } = req.body;
+  console.log("req.file value:", req.file);
+  const profilePicture = req.file ? req.file.path : null;
+
   try {
     const userId = req.user.id;
     const updatedFields = {};

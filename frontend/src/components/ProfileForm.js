@@ -16,6 +16,7 @@ export const ProfileForm = ({
   errors,
   loading,
   hasChanges,
+  onFileChange,
 }) => {
   return (
     <StyledForm onSubmit={onSubmit}>
@@ -38,12 +39,11 @@ export const ProfileForm = ({
         variant="outlined"
       />
       {errors.email && <Typography color="error">{errors.email}</Typography>}
-      <TextField
+      <input
+        type="file"
         name="profilePicture"
-        label="Profile Picture URL"
-        value={formData.profilePicture}
-        onChange={onChange}
-        variant="outlined"
+        onChange={onFileChange}
+        style={{ marginTop: "1rem" }}
       />
       {errors.profilePicture && (
         <Typography color="error">{errors.profilePicture}</Typography>

@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../middleware/uploadMiddleware");
 const {
   registerUser,
   loginUser,
@@ -12,7 +13,9 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/refresh-token", refreshToken);
-router.get("/profile", authMiddleware, fetchUserProfile);
-router.put("/profile", authMiddleware, updateProfile);
+router
+  .route("/profile")
+  .get(authMiddleware, fetchUserProfile)
+  .put(authMiddleware, upload.single("profilePicture"), updateProfile);
 
 module.exports = router;
