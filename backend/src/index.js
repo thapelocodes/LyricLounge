@@ -7,6 +7,7 @@ const messageRoutes = require("./routes/messageRoutes");
 const WebSocket = require("ws");
 const { verifyToken } = require("./middleware/authMiddleware");
 const path = require("path");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
@@ -14,6 +15,13 @@ const port = process.env.PORT;
 
 connectDB();
 
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 app.get("/health", (req, res) => {
   res.send("Server is running");
