@@ -54,6 +54,7 @@ export const fetchProfile = createAsyncThunk(
       const { data } = await apiBase.get("/users/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("Data:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data);

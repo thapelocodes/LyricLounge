@@ -135,7 +135,10 @@ export const Profile = () => {
                   <StyledAvatar
                     src={
                       user && user.profilePicture
-                        ? user.profilePicture
+                        ? `http://localhost:5000/${user.profilePicture.replace(
+                            /^.*\/uploads\//,
+                            "uploads/"
+                          )}`
                         : require("../assets/profile-user_64572.png")
                     }
                     alt="Profile"
