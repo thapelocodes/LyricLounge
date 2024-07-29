@@ -133,10 +133,14 @@ export const Profile = () => {
               <>
                 <Box display="flex" alignItems="center" mb={2}>
                   <StyledAvatar
-                    src={`http://localhost:5000/${profile.profilePicture.replace(
-                      /^.*\/uploads\//,
-                      "uploads/"
-                    )}`}
+                    src={
+                      profile && profile.profilePicture
+                        ? `http://localhost:5000/${profile.profilePicture.replace(
+                            /^.*\/uploads\//,
+                            "uploads/"
+                          )}`
+                        : require("../assets/profile-user_64572.png")
+                    }
                     alt="Profile"
                   />
                   <Box ml={2}>
