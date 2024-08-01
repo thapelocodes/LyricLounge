@@ -8,6 +8,9 @@ const WebSocket = require("ws");
 const { verifyToken } = require("./middleware/authMiddleware");
 const path = require("path");
 const cors = require("cors");
+const Chatroom = require("./models/Chatroom");
+const Message = require("./models/Message");
+const { markMessagesAsReceived } = require("./controllers/messageController");
 require("dotenv").config();
 
 const app = express();
@@ -33,6 +36,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const connectedUsers = new Map();
 
 wss.on("connection", (ws) => {
   console.log("New client connected");
@@ -50,6 +54,24 @@ wss.on("connection", (ws) => {
 
       if (type === "authenticate") {
         console.log("Client authenticated:", user.username);
+        connectedUsers.set(user._id, ws);
+        console.log("Connected users:");
+        for (const [key, value] of connectedUsers) {
+          console.log(key);
+        }
+
+        // Fetch chatrooms the user is a member of
+        const chatrooms = await Chatroom.find({ users: user._id });
+        const chatroomIds = chatrooms.map((chatroom) => chatroom._id);
+
+        // Fetch all messages in the chatrooms
+        const messages = await Message.find({
+          chatroomId: { $in: chatroomIds },
+        });
+        const messageIds = messages.map((message) => message._id);
+
+        // Mark messages as received
+        await markMessagesAsReceived(messageIds, user._id);
       }
 
       if (type === "chatMessage") {
@@ -63,6 +85,7 @@ wss.on("connection", (ws) => {
             sender: user.username,
             content: data.content,
             timestamp: new Date(),
+            messageId: data.messageId,
           },
         };
 
@@ -78,8 +101,12 @@ wss.on("connection", (ws) => {
     }
   });
 
-  ws.on("close", () => {
+  ws.on("close", async () => {
     console.log("Client disconnected");
+    const user = [...connectedUsers].find(([key, value]) => value === ws);
+    if (user) {
+      connectedUsers.delete(user[0]);
+    }
   });
 });
 
