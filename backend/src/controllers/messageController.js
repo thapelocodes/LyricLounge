@@ -77,13 +77,15 @@ const sendMessage = async (req, res) => {
       receivedBy: [],
       seenBy: [],
     });
-    message.messageId = message._id;
-    console.log("Message ID:", message.messageId);
     await message.save();
 
-    console.log("Message sent:", message);
+    const messageId = message._id;
+    const messageToSend = {
+      ...message.toObject(),
+      messageId,
+    };
 
-    res.status(201).json(message);
+    res.status(201).json(messageToSend);
   } catch (error) {
     console.error("Error in sendMessage:", error);
     res.status(500).json({ message: "Server Error" });
