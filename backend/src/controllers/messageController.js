@@ -1,19 +1,6 @@
 const Message = require("../models/Message");
 const User = require("../models/User");
 
-const markMessageAsReceived = async (messageId, userId) => {
-  try {
-    await Message.findByIdAndUpdate(
-      messageId,
-      { $addToSet: { receivedBy: userId } },
-      { new: true }
-    );
-  } catch (error) {
-    console.error("Error updating message status:", error);
-    throw error;
-  }
-};
-
 const markMessagesAsReceived = async (messageIds, userId) => {
   try {
     for (const messageId of messageIds) {
@@ -69,20 +56,14 @@ const sendMessage = async (req, res) => {
   const senderId = req.user._id;
   try {
     const user = await User.findById(senderId).select("username");
-    const message = new Message({
+    const messageToSend = {
       chatroomId,
       sender: user.username,
       content,
-      isSent: true,
+      timestamp: new Date(),
+      isSennt: true,
       receivedBy: [],
       seenBy: [],
-    });
-    await message.save();
-
-    const messageId = message._id;
-    const messageToSend = {
-      ...message.toObject(),
-      messageId,
     };
 
     res.status(201).json(messageToSend);
@@ -93,7 +74,6 @@ const sendMessage = async (req, res) => {
 };
 
 module.exports = {
-  markMessageAsReceived,
   markMessagesAsReceived,
   getChatHistroy,
   sendMessage,

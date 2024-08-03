@@ -78,14 +78,33 @@ wss.on("connection", (ws) => {
         console.log("New message from:", user.username);
         console.log("Message:", data.content);
 
+        // Create and save the message
+        const newMessage = new Message({
+          chatroomId: data.chatroomId,
+          sender: user.username,
+          content: data.content,
+          timestamp: new Date(),
+          isSent: true,
+          receivedBy: [],
+          seenBy: [],
+        });
+        await newMessage.save();
+
+        // Fetch all connected users in the chatroom
+        const userIds = Array.from(connectedUsers.keys());
+
+        // Mark the message as received for all users except the sender
+        await markMessagesAsReceived(
+          [newMessage._id],
+          userIds.filter((id) => !id.equals(user._id))
+        );
+
+        // Broadcast the message to all clients in the chatroom
         const broadcastMessage = {
           type: "chatMessage",
           data: {
-            chatroomId: data.chatroomId,
-            sender: user.username,
-            content: data.content,
-            timestamp: new Date(),
-            messageId: data.messageId,
+            ...newMessage.toObject(),
+            messageId: newMessage._id,
           },
         };
 
