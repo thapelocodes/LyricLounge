@@ -21,7 +21,7 @@ const MessageBox = styled(Box)(({ theme }) => ({
 
 const MessageCard = styled(Card)(({ theme, owner }) => ({
   maxWidth: "65%",
-  maxHeight: "100px",
+  // maxHeight: "100px",
   marginBottom: theme.spacing(1),
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(1),
