@@ -1,15 +1,27 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage } from "../features/chat/chatSlice";
+import { addMessage, markMessagesAsSeen } from "../features/chat/chatSlice";
 
 const WebSocketContext = createContext();
-
-let message = "";
 
 export const WebSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
+  const { openChatroomId } = useSelector((state) => state.chat);
+
+  // Use a ref to keep track of the latest value of openChatroomId
+  const openChatroomIdRef = useRef(openChatroomId);
+
+  useEffect(() => {
+    openChatroomIdRef.current = openChatroomId;
+  }, [openChatroomId]);
 
   useEffect(() => {
     if (token && !socket) {
@@ -22,9 +34,16 @@ export const WebSocketProvider = ({ children }) => {
 
       newSocket.onmessage = (e) => {
         console.log("Event:", e);
-        message = JSON.parse(e.data);
+        const message = JSON.parse(e.data);
         console.log("WebSocket message received:", message);
+        console.log("Open chatroom ID:", openChatroomIdRef.current);
         if (message.type === "chatMessage") {
+          if (
+            openChatroomIdRef.current &&
+            message.data.chatroomId === openChatroomIdRef.current
+          ) {
+            dispatch(markMessagesAsSeen(openChatroomIdRef.current));
+          }
           dispatch(addMessage(message.data));
         }
       };

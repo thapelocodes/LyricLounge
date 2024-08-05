@@ -26,6 +26,7 @@ const markMessagesAsReceived = async (messageIds, userId) => {
 };
 
 const markMessagesAsSeen = async (userId, chatroomId) => {
+  console.log("chatroomId:", chatroomId);
   const messages = await Message.find({
     chatroomId,
     // receivedBy: userId,
@@ -33,8 +34,32 @@ const markMessagesAsSeen = async (userId, chatroomId) => {
   });
 
   for (const message of messages) {
+    if (message.seenBy.includes(userId)) {
+      console.log(`User ${userId} has already seen this message.`);
+      continue;
+    }
     message.seenBy.push(userId);
     await message.save();
+  }
+};
+
+const markMessagesAsSeenFromSocket = async (req, res) => {
+  try {
+    if (!req.body.userId || !req.params.chatroomId) {
+      console.log(
+        `req.user: ${req.body.userId}`,
+        `req.params.chatroomId: ${req.params.chatroomId}`
+      );
+      throw new Error("Invalid request parameters");
+    }
+    await markMessagesAsSeen(req.body.userId, req.params.chatroomId);
+    const messages = await Message.find({
+      chatroomId: req.params.chatroomId,
+    }).sort({ timestamp: 1 });
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -75,6 +100,7 @@ const sendMessage = async (req, res) => {
 
 module.exports = {
   markMessagesAsReceived,
+  markMessagesAsSeenFromSocket,
   getChatHistroy,
   sendMessage,
 };
