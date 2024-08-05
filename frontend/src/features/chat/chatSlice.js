@@ -276,9 +276,9 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(markMessagesAsSeen.pending, (state) => {
-        state.loading = true;
-      })
+      // .addCase(markMessagesAsSeen.pending, (state) => {
+      //   state.loading = true;
+      // })
       .addCase(markMessagesAsSeen.fulfilled, (state) => {
         state.loading = false;
       })
