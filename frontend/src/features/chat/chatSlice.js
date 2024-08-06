@@ -122,13 +122,14 @@ export const markMessagesAsSeen = createAsyncThunk(
     const state = getState();
     const token = state.auth.token;
     const userId = state.auth.user._id;
-    await axios.put(
+    const response = await axios.put(
       `/api/messages/${chatroomId}/mark-seen`,
       { userId },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+    return response.data;
   }
 );
 
@@ -139,7 +140,6 @@ const initialState = {
   openChatroomId: null,
   loading: false,
   error: null,
-  newMessage: null,
 };
 
 const chatSlice = createSlice({
@@ -153,7 +153,6 @@ const chatSlice = createSlice({
         userChatrooms: [],
         error: null,
         openChatroomId: null,
-        newMessage: null,
       };
     },
     setOpenChatroom: (state, action) => {
@@ -268,7 +267,6 @@ const chatSlice = createSlice({
       .addCase(sendMessage.fulfilled, (state, action) => {
         console.log("Message sent!");
         const message = action.payload;
-        state.newMessage = message;
         state.messages[message.chatroomId].push(message);
         state.loading = false;
       })
@@ -279,12 +277,13 @@ const chatSlice = createSlice({
       // .addCase(markMessagesAsSeen.pending, (state) => {
       //   state.loading = true;
       // })
-      .addCase(markMessagesAsSeen.fulfilled, (state) => {
-        state.loading = false;
+      .addCase(markMessagesAsSeen.fulfilled, (state, action) => {
+        const messagesArray = action.payload;
+        console.log("Messages marked as seen:", messagesArray);
+        state.messages[state.openChatroomId] = messagesArray;
       })
       .addCase(markMessagesAsSeen.rejected, (state, action) => {
         state.error = action.error.message;
-        state.loading = false;
       });
   },
 });

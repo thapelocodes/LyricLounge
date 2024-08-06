@@ -15,6 +15,7 @@ export const WebSocketProvider = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const { openChatroomId } = useSelector((state) => state.chat);
+  const user = useSelector((state) => state.auth.user);
 
   // Use a ref to keep track of the latest value of openChatroomId
   const openChatroomIdRef = useRef(openChatroomId);
@@ -44,7 +45,7 @@ export const WebSocketProvider = ({ children }) => {
           ) {
             dispatch(markMessagesAsSeen(openChatroomIdRef.current));
           }
-          dispatch(addMessage(message.data));
+          dispatch(addMessage({ ...message.data, receivedBy: [user._id] }));
         }
       };
 
@@ -59,7 +60,7 @@ export const WebSocketProvider = ({ children }) => {
         if (newSocket.readyState === WebSocket.OPEN) newSocket.close();
       };
     }
-  }, [token, socket, dispatch]);
+  }, [token, socket, dispatch, user]);
 
   const sendMessage = (message) => {
     if (socket) {
