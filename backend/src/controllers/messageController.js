@@ -96,6 +96,7 @@ const sendMessage = async (req, res) => {
   const { chatroomId, content } = req.body;
   const senderId = req.user._id;
   try {
+    await markMessagesAsSeen(senderId, chatroomId);
     const user = await User.findById(senderId).select("username");
     const messageToSend = {
       chatroomId,
@@ -103,8 +104,8 @@ const sendMessage = async (req, res) => {
       content,
       timestamp: new Date(),
       isSennt: true,
-      receivedBy: [],
-      seenBy: [],
+      receivedBy: [senderId],
+      seenBy: [senderId],
     };
 
     res.status(201).json(messageToSend);

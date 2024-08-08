@@ -94,10 +94,8 @@ wss.on("connection", (ws) => {
         const userIds = Array.from(connectedUsers.keys());
 
         // Mark the message as received for all users except the sender
-        await markMessagesAsReceived(
-          [newMessage._id],
-          userIds.filter((id) => !id.equals(user._id))
-        );
+        for (const userId of userIds)
+          await markMessagesAsReceived([newMessage._id], userId);
 
         // Broadcast the message to all clients in the chatroom
         const broadcastMessage = {
