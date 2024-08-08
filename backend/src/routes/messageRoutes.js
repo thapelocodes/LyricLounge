@@ -3,6 +3,7 @@ const {
   getChatHistroy,
   sendMessage,
   markMessagesAsSeenFromSocket,
+  getMessagesByMembership,
 } = require("../controllers/messageController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 
@@ -15,5 +16,6 @@ router.put(
   // authMiddleware,
   markMessagesAsSeenFromSocket
 );
+router.get("/", authMiddleware, getMessagesByMembership);
 
 module.exports = router;

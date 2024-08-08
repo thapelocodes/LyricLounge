@@ -76,6 +76,22 @@ const getChatHistroy = async (req, res) => {
   }
 };
 
+const getMessagesByMembership = async (req, res) => {
+  try {
+    const messagesByChatroom = {};
+    for (const chatroomId of req.user.chatrooms) {
+      const messages = await Message.find({ chatroomId }).sort({
+        timestamp: 1,
+      });
+      messagesByChatroom[chatroomId] = messages;
+    }
+    res.status(200).json({ messagesByChatroom, userId: req.user._id });
+  } catch (error) {
+    console.error("Error in getMessagesByMembership:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 const sendMessage = async (req, res) => {
   const { chatroomId, content } = req.body;
   const senderId = req.user._id;
@@ -102,5 +118,6 @@ module.exports = {
   markMessagesAsReceived,
   markMessagesAsSeenFromSocket,
   getChatHistroy,
+  getMessagesByMembership,
   sendMessage,
 };

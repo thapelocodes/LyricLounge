@@ -100,6 +100,18 @@ export const fetchChatHistory = createAsyncThunk(
   }
 );
 
+export const fetchMessagesByMembership = createAsyncThunk(
+  "chat/fetchMessagesByMembership",
+  async (_, { getState }) => {
+    const state = getState();
+    const token = state.auth.token;
+    const response = await axios.get("/api/messages", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  }
+);
+
 export const sendMessage = createAsyncThunk(
   "chat/sendMessage",
   async ({ chatroomId, content }, { getState }) => {
@@ -137,6 +149,7 @@ const initialState = {
   chatrooms: [],
   userChatrooms: [],
   messages: {},
+  notifications: {},
   openChatroomId: null,
   loading: false,
   error: null,
@@ -159,6 +172,10 @@ const chatSlice = createSlice({
       return {
         ...state,
         openChatroomId: action.payload,
+        notifications: {
+          ...state.notifications,
+          [action.payload]: 0,
+        },
       };
     },
     addMessage: (state, action) => {
@@ -261,6 +278,31 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      // .addCase(fetchMessagesByMembership.pending, (state) => {
+      //   state.loading = true;
+      // })
+      .addCase(fetchMessagesByMembership.fulfilled, (state, action) => {
+        state.loading = false;
+        const { messagesByChatroom, userId } = action.payload;
+        const notifications = {};
+
+        for (const chatroomId in messagesByChatroom) {
+          const messages = messagesByChatroom[chatroomId];
+          state.messages[chatroomId] = messages;
+          const unseenCount = messages.filter(
+            (message) =>
+              message.receivedBy.includes(userId) &&
+              !message.seenBy.includes(userId)
+          ).length;
+          notifications[chatroomId] = unseenCount;
+        }
+
+        state.notifications = notifications;
+      })
+      .addCase(fetchMessagesByMembership.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(sendMessage.pending, () => {
         console.log("Sending message...");
       })
@@ -288,5 +330,11 @@ const chatSlice = createSlice({
   },
 });
 
-export const { resetChat, setOpenChatroom, addMessage } = chatSlice.actions;
+export const {
+  resetChat,
+  setOpenChatroom,
+  addMessage,
+  clearNotifications,
+  updateNotifications,
+} = chatSlice.actions;
 export default chatSlice.reducer;

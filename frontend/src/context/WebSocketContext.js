@@ -6,7 +6,11 @@ import React, {
   useRef,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage, markMessagesAsSeen } from "../features/chat/chatSlice";
+import {
+  addMessage,
+  fetchMessagesByMembership,
+  markMessagesAsSeen,
+} from "../features/chat/chatSlice";
 
 const WebSocketContext = createContext();
 
@@ -46,6 +50,7 @@ export const WebSocketProvider = ({ children }) => {
             dispatch(markMessagesAsSeen(openChatroomIdRef.current));
           }
           dispatch(addMessage({ ...message.data, receivedBy: [user._id] }));
+          dispatch(fetchMessagesByMembership());
         }
       };
 

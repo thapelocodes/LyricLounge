@@ -9,7 +9,11 @@ import {
   Alert,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { fetchChatrooms, fetchUserChatrooms } from "../features/chat/chatSlice";
+import {
+  fetchChatrooms,
+  fetchUserChatrooms,
+  fetchMessagesByMembership,
+} from "../features/chat/chatSlice";
 import ChatRoom from "../components/Chatroom";
 import CreateChatroom from "../components/CreateChatroom";
 import OpenChatRoom from "../components/OpenChatroom";
@@ -49,6 +53,7 @@ export const Chatrooms = () => {
   useEffect(() => {
     dispatch(fetchChatrooms());
     dispatch(fetchUserChatrooms());
+    dispatch(fetchMessagesByMembership());
   }, [dispatch]);
 
   if (loading)
