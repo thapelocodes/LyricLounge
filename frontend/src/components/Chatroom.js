@@ -19,7 +19,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 const ChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
-  const userChatrooms = useSelector((state) => state.chat.userChatrooms);
+  const { userChatrooms, notifications } = useSelector((state) => state.chat);
   const isMember = userChatrooms.some((c) => c._id === chatRoom._id);
 
   const onJoin = (chatroomId) => {
@@ -41,6 +41,9 @@ const ChatRoom = ({ chatRoom }) => {
         <Typography variant="h6">{chatRoom.name}</Typography>
         <Typography variant="body2" color="textSecondary">
           {chatRoom.description}
+        </Typography>
+        <Typography variant="body2" color="InfoText">
+          {notifications[chatRoom._id] > 0 && notifications[chatRoom._id]}
         </Typography>
         <Box mt={2}>
           {isMember ? (
