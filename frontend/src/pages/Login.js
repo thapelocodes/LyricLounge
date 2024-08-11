@@ -6,10 +6,18 @@ import { TextField, Button, Typography, Container } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const FormContainer = styled(Container)(({ theme }) => ({
+  border: `1px solid ${theme.palette.secondary.main}`,
+  borderRadius: "12px",
   maxWidth: 400,
   margin: "auto",
+  marginTop: theme.spacing(8),
   padding: theme.spacing(4),
   textAlign: "center",
+  backgroundColor: theme.palette.background.default,
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 25,
+    height: 50,
+  },
 }));
 
 const ErrorText = styled(Typography)(({ theme }) => ({

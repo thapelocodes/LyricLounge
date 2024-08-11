@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenChatroom, sendMessage } from "../features/chat/chatSlice";
 import { useWebSocket } from "../context/WebSocketContext";
@@ -17,6 +17,7 @@ const MessageBox = styled(Box)(({ theme }) => ({
   maxHeight: 400,
   overflowY: "auto",
   marginBottom: theme.spacing(2),
+  position: "relative",
 }));
 
 const MessageCard = styled(Card)(({ theme, owner }) => ({
@@ -26,6 +27,8 @@ const MessageCard = styled(Card)(({ theme, owner }) => ({
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(1),
   backgroundColor: owner ? "#f0f0f0" : "#fefefe",
+  marginLeft: owner ? "auto" : 10,
+  marginRight: owner ? 10 : "auto",
 }));
 
 const SenderName = styled(Typography)(({ theme }) => ({
@@ -42,13 +45,35 @@ const MessageTimestamp = styled(CardActions)(({ theme }) => ({
   padding: theme.spacing(1),
 }));
 
+const StyledMessageForm = styled("form")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 25,
+    height: 50,
+    marginBottom: theme.spacing(1),
+    maxWidth: "calc(100% - 20px)",
+  },
+  height: 50,
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
 const OpenChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const messages =
     useSelector((state) => state.chat.messages[chatRoom._id]) || [];
   const [content, setContent] = useState("");
   const { sendMessage: sendWebSocketMessage } = useWebSocket();
   const username = useSelector((state) => state.auth.user.username);
+  const messageBoxRef = useRef(null);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -70,13 +95,21 @@ const OpenChatRoom = ({ chatRoom }) => {
     timeStyle: "short",
   });
 
+  useEffect(() => {
+    messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
+  }, [messages]);
+
   return (
     <Box>
       <Typography variant="h6">{chatRoom.name}</Typography>
-      <Button variant="outlined" color="error" onClick={handleCloseChatroom}>
+      <StyledButton
+        variant="outlined"
+        color="error"
+        onClick={handleCloseChatroom}
+      >
         Close
-      </Button>
-      <MessageBox>
+      </StyledButton>
+      <MessageBox ref={messageBoxRef}>
         {messages.map((message) =>
           message && message.sender && message.content ? (
             <MessageCard key={message._id} owner={message.sender === username}>
@@ -100,18 +133,18 @@ const OpenChatRoom = ({ chatRoom }) => {
           )
         )}
       </MessageBox>
-      <form onSubmit={handleSendMessage}>
-        <TextField
+      <StyledMessageForm onSubmit={handleSendMessage}>
+        <StyledTextField
           fullWidth
           variant="outlined"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Type a message..."
         />
-        <Button variant="contained" color="primary" type="submit">
+        <StyledButton variant="contained" color="primary" type="submit">
           Send
-        </Button>
-      </form>
+        </StyledButton>
+      </StyledMessageForm>
     </Box>
   );
 };

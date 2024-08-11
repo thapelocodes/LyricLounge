@@ -25,7 +25,8 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: "8px",
+          borderRadius: "20px",
+          marginTop: "1rem",
         },
       },
     },
@@ -33,6 +34,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "12px",
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          borderRadius: "25px",
         },
       },
     },
