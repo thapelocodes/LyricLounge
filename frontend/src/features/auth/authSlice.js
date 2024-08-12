@@ -6,6 +6,7 @@ export const loginUser = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await apiBase.post("/users/login", formData);
+      console.log("login response:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -65,8 +66,12 @@ export const fetchProfile = createAsyncThunk(
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
   sessionStorage.removeItem("token");
+  sessionStorage.removeItem("refreshToken");
+  sessionStorage.removeItem("tokenExpiry");
   sessionStorage.removeItem("user");
   localStorage.removeItem("token");
+  localStorage.removeItem("tokenExpiry");
+  localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
 };
 
@@ -77,6 +82,14 @@ const initialState = {
     null,
   token:
     sessionStorage.getItem("token") || localStorage.getItem("token") || null,
+  tokenExpiry:
+    sessionStorage.getItem("tokenExpiry") ||
+    localStorage.getItem("tokenExpiry") ||
+    null,
+  refreshToken:
+    sessionStorage.getItem("refreshToken") ||
+    localStorage.getItem("refreshToken") ||
+    null,
   loading: false,
   error: null,
   success: false,
@@ -106,6 +119,8 @@ const authSlice = createSlice({
         state.user = action.payload;
         console.log("Payload:", action.payload);
         state.token = action.payload.token;
+        state.tokenExpiry = action.payload.tokenExpiry;
+        state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
         sessionStorage.setItem("user", JSON.stringify(action.payload));
         localStorage.setItem("user", JSON.stringify(action.payload));
@@ -115,6 +130,10 @@ const authSlice = createSlice({
         );
         sessionStorage.setItem("token", action.payload.token);
         localStorage.setItem("token", action.payload.token);
+        sessionStorage.setItem("tokenExpiry", action.payload.tokenExpiry);
+        localStorage.setItem("tokenExpiry", action.payload.tokenExpiry);
+        sessionStorage.setItem("refreshToken", action.payload.refreshToken);
+        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
