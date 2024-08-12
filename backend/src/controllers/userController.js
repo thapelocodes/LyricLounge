@@ -66,6 +66,7 @@ const loginUser = async (req, res) => {
         token: accessToken,
         refreshToken,
         bio: user.bio,
+        tokenExpiry: jwt.decode(accessToken).exp,
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
