@@ -106,7 +106,11 @@ const refreshToken = async (req, res) => {
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     });
 
-    res.json({ token: newAccessToken, refreshToken: newRefreshToken });
+    res.json({
+      token: newAccessToken,
+      refreshToken: newRefreshToken,
+      tokenExpiry: jwt.decode(newAccessToken).exp,
+    });
   } catch (error) {
     res.status(401).json({ message: "Invalid refresh token" });
   }
