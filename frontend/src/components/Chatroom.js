@@ -52,6 +52,7 @@ const ChatRoom = ({ chatRoom }) => {
   const { userChatrooms, notifications } = useSelector((state) => state.chat);
   const isMember = userChatrooms.some((c) => c._id === chatRoom._id);
   const notificationsRef = useRef();
+  const chatroomNotifications = notifications[chatRoom._id];
 
   const onJoin = (chatroomId) => {
     dispatch(joinChatroom(chatroomId));
@@ -74,7 +75,7 @@ const ChatRoom = ({ chatRoom }) => {
       }, 1000);
       return () => clearTimeout(timeout);
     }
-  }, [notifications]);
+  }, [chatroomNotifications]);
 
   return (
     <StyledCard>
