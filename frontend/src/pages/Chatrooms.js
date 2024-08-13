@@ -73,7 +73,13 @@ export const Chatrooms = () => {
     chatrooms.find((c) => c._id === openChatroomId) ||
     userChatrooms.find((c) => c._id === openChatroomId);
 
-  return (
+  return openChatroomId && openChatroom ? (
+    <Grid item xs={12} md={6}>
+      {openChatroomId && openChatroom && (
+        <OpenChatRoom chatRoom={openChatroom} />
+      )}
+    </Grid>
+  ) : (
     <Container>
       <Typography variant="h4" component="h1" gutterBottom>
         Chatrooms
@@ -90,11 +96,6 @@ export const Chatrooms = () => {
               ))}
             </CardContent>
           </SectionCard>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          {openChatroomId && openChatroom && (
-            <OpenChatRoom chatRoom={openChatroom} />
-          )}
         </Grid>
         <Grid item xs={12}>
           <SectionCard>
