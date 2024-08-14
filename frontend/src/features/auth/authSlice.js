@@ -63,6 +63,23 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
+export const tokenRefresher = createAsyncThunk(
+  "auth/tokenRefresher",
+  async (refreshToken, { rejectWithValue }) => {
+    try {
+      const response = await apiBase.post("/users/refresh-token", {
+        refreshToken,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      return rejectWithValue(
+        error.response.data || "An error occurred while refreshing token"
+      );
+    }
+  }
+);
+
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
   sessionStorage.removeItem("token");
@@ -156,7 +173,7 @@ const authSlice = createSlice({
         state.success = false;
       })
       .addCase(updateProfile.pending, (state) => {
-        state.loading = true;
+        // state.loading = true;
         state.error = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
@@ -171,7 +188,7 @@ const authSlice = createSlice({
         console.log("Error updating profile:", action.payload);
       })
       .addCase(fetchProfile.pending, (state) => {
-        state.loading = true;
+        // state.loading = true;
         state.error = null;
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
@@ -180,6 +197,24 @@ const authSlice = createSlice({
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(tokenRefresher.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(tokenRefresher.fulfilled, (state, action) => {
+        const { token, refreshToken, tokenExpiry } = action.payload;
+        state.token = token;
+        state.refreshToken = refreshToken;
+        state.tokenExpiry = tokenExpiry;
+        sessionStorage.setItem("token", token);
+        localStorage.setItem("token", token);
+        sessionStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        sessionStorage.setItem("tokenExpiry", tokenExpiry);
+        localStorage.setItem("tokenExpiry", tokenExpiry);
+      })
+      .addCase(tokenRefresher.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import apiBase from "../../utils/apiBase";
 
 export const fetchChatrooms = createAsyncThunk(
   "chat/fetchChatrooms",
   async (_, { getState }) => {
     const state = getState();
     const token = state.auth.token;
-    const response = await axios.get("/api/chats", {
+    const response = await apiBase.get("/chats", {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Public Chatrooms:", response.data);
@@ -19,7 +19,7 @@ export const fetchUserChatrooms = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState();
     const token = state.auth.token;
-    const response = await axios.get("/api/chats/user-chatrooms", {
+    const response = await apiBase.get("/chats/user-chatrooms", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -33,7 +33,7 @@ export const joinChatroom = createAsyncThunk(
     const token = state.auth.token;
 
     try {
-      const response = await axios.post(`/api/chats/${chatroomId}/join`, null, {
+      const response = await apiBase.post(`/chats/${chatroomId}/join`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -49,13 +49,9 @@ export const leaveChatroom = createAsyncThunk(
     const state = getState();
     const token = state.auth.token;
     try {
-      const response = await axios.post(
-        `/api/chats/${chatroomId}/leave`,
-        null,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await apiBase.post(`/chats/${chatroomId}/leave`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -70,8 +66,8 @@ export const createChatroom = createAsyncThunk(
     const token = state.auth.token;
 
     try {
-      const response = await axios.post(
-        "/api/chats",
+      const response = await apiBase.post(
+        "/chats",
         { name, description },
         {
           headers: {
@@ -92,7 +88,7 @@ export const fetchChatHistory = createAsyncThunk(
   async (chatroomId, { getState }) => {
     const state = getState();
     const token = state.auth.token;
-    const response = await axios.get(`/api/messages/${chatroomId}`, {
+    const response = await apiBase.get(`/messages/${chatroomId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Fetching chat history...");
@@ -105,7 +101,7 @@ export const fetchMessagesByMembership = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState();
     const token = state.auth.token;
-    const response = await axios.get("/api/messages", {
+    const response = await apiBase.get("/messages", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -117,8 +113,8 @@ export const sendMessage = createAsyncThunk(
   async ({ chatroomId, content }, { getState }) => {
     const state = getState();
     const token = state.auth.token;
-    const response = await axios.post(
-      `/api/messages/`,
+    const response = await apiBase.post(
+      `/messages/`,
       { chatroomId, content },
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -134,8 +130,8 @@ export const markMessagesAsSeen = createAsyncThunk(
     const state = getState();
     const token = state.auth.token;
     const userId = state.auth.user._id;
-    const response = await axios.put(
-      `/api/messages/${chatroomId}/mark-seen`,
+    const response = await apiBase.put(
+      `/messages/${chatroomId}/mark-seen`,
       { userId },
       {
         headers: { Authorization: `Bearer ${token}` },
