@@ -14,7 +14,7 @@ import {
 import { styled } from "@mui/material/styles";
 
 const MessageBox = styled(Box)(({ theme }) => ({
-  maxHeight: 400,
+  maxHeight: "calc(78.5vh - 100px)",
   overflowY: "auto",
   marginBottom: theme.spacing(2),
   position: "relative",
@@ -49,6 +49,9 @@ const StyledMessageForm = styled("form")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  position: "fixed",
+  bottom: 0,
+  width: "100%",
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -56,13 +59,16 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     borderRadius: 25,
     height: 50,
     marginBottom: theme.spacing(1),
-    maxWidth: "calc(100% - 20px)",
+    marginLeft: theme.spacing(1),
+    maxWidth: "calc(100% - 30px)",
   },
   height: 50,
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginBottom: theme.spacing(2),
+  marginRight: theme.spacing(2),
+  marginLeft: theme.spacing(1),
 }));
 
 const OpenChatRoom = ({ chatRoom }) => {
