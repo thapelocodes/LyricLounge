@@ -21,6 +21,7 @@ import OpenChatRoom from "../components/OpenChatroom";
 // Styled components
 const Container = styled("div")(({ theme }) => ({
   padding: theme.spacing(3),
+  marginTop: theme.spacing(8),
   backgroundColor: theme.palette.background.default,
   height: "100%",
 }));

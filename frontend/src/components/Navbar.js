@@ -27,7 +27,7 @@ export const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar>
       <StyledToolbar>
         <Typography variant="h6">LyricLounge</Typography>
         <div>

@@ -21,6 +21,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     padding: theme.spacing(2),
   },
+  marginTop: theme.spacing(8),
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({

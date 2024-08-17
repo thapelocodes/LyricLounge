@@ -7,6 +7,7 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   textAlign: "center",
   borderBottom: `1px solid ${theme.palette.divider}`,
+  marginTop: theme.spacing(8),
 }));
 
 export const Header = () => {

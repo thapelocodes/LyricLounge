@@ -8,9 +8,11 @@ import { styled } from "@mui/material/styles";
 const FormContainer = styled(Container)(({ theme }) => ({
   border: `1px solid ${theme.palette.secondary.main}`,
   borderRadius: "12px",
+  width: "65%",
+  minWidth: 275,
   maxWidth: 400,
   margin: "auto",
-  marginTop: theme.spacing(8),
+  marginTop: theme.spacing(16),
   backgroundColor: theme.palette.background.default,
   padding: theme.spacing(4),
   textAlign: "center",
@@ -18,6 +20,10 @@ const FormContainer = styled(Container)(({ theme }) => ({
     borderRadius: 25,
     height: 50,
   },
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  height: 50,
 }));
 
 const ErrorText = styled(Typography)(({ theme }) => ({
@@ -61,7 +67,7 @@ export const Register = () => {
         Register
       </Typography>
       <form onSubmit={onSubmit}>
-        <TextField
+        <StyledTextField
           type="text"
           name="username"
           value={username}

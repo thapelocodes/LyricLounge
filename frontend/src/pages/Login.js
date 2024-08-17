@@ -8,9 +8,11 @@ import { styled } from "@mui/material/styles";
 const FormContainer = styled(Container)(({ theme }) => ({
   border: `1px solid ${theme.palette.secondary.main}`,
   borderRadius: "12px",
+  width: "65%",
+  minWidth: 275,
   maxWidth: 400,
   margin: "auto",
-  marginTop: theme.spacing(8),
+  marginTop: theme.spacing(16),
   padding: theme.spacing(4),
   textAlign: "center",
   backgroundColor: theme.palette.background.default,

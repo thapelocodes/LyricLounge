@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setOpenChatroom, sendMessage } from "../features/chat/chatSlice";
 import { useWebSocket } from "../context/WebSocketContext";
 import {
+  AppBar,
+  Toolbar,
   Box,
   Typography,
   TextField,
@@ -14,15 +16,31 @@ import {
 import { styled } from "@mui/material/styles";
 
 const MessageBox = styled(Box)(({ theme }) => ({
-  maxHeight: "calc(78.5vh - 100px)",
+  marginTop: theme.spacing(10),
+  paffingTop: theme.spacing(2),
   overflowY: "auto",
-  marginBottom: theme.spacing(2),
+  marginBottom: theme.spacing(8),
   position: "relative",
+}));
+
+const MessageBoxHeader = styled(AppBar)(({ theme }) => ({
+  // width: "100%",
+  // display: "flex",
+  // justifyContent: "space-between",
+  // alignContent: "center",
+  // position: "fixed",
+  // zIndex: 100,
+  // top: 0,
+  // backgroundColor: theme.palette.primary.main,
+}));
+
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
 }));
 
 const MessageCard = styled(Card)(({ theme, owner }) => ({
   maxWidth: "65%",
-  // maxHeight: "100px",
   marginBottom: theme.spacing(1),
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(1),
@@ -52,6 +70,7 @@ const StyledMessageForm = styled("form")(({ theme }) => ({
   position: "fixed",
   bottom: 0,
   width: "100%",
+  backgroundColor: "#fff",
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -65,10 +84,14 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   height: 50,
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
+const StyledButton = styled(Button)(({ theme, color }) => ({
   marginBottom: theme.spacing(2),
   marginRight: theme.spacing(2),
   marginLeft: theme.spacing(1),
+
+  ...(color === "secondary" && {
+    marginRight: theme.spacing(0),
+  }),
 }));
 
 const OpenChatRoom = ({ chatRoom }) => {
@@ -103,18 +126,26 @@ const OpenChatRoom = ({ chatRoom }) => {
 
   useEffect(() => {
     messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
+    // set the scroll to the bottom of the window/page
+    window.scroll(0, document.body.scrollHeight);
   }, [messages]);
 
   return (
     <Box>
-      <Typography variant="h6">{chatRoom.name}</Typography>
-      <StyledButton
-        variant="outlined"
-        color="error"
-        onClick={handleCloseChatroom}
-      >
-        Close
-      </StyledButton>
+      <MessageBoxHeader>
+        <StyledToolbar>
+          <Typography variant="h6" color="white">
+            {chatRoom.name}
+          </Typography>
+          <StyledButton
+            variant="contained"
+            color="secondary"
+            onClick={handleCloseChatroom}
+          >
+            Close
+          </StyledButton>
+        </StyledToolbar>
+      </MessageBoxHeader>
       <MessageBox ref={messageBoxRef}>
         {messages.map((message) =>
           message && message.sender && message.content ? (
