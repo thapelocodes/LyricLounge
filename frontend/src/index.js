@@ -5,12 +5,15 @@ import App from "./App";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { WebSocketProvider } from "./context/WebSocketContext";
+import { AuthProvider } from "./context/AuthProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
-    <WebSocketProvider>
-      <App />
-    </WebSocketProvider>
+    <AuthProvider>
+      <WebSocketProvider>
+        <App />
+      </WebSocketProvider>
+    </AuthProvider>
   </Provider>
 );

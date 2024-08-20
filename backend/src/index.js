@@ -11,6 +11,7 @@ const cors = require("cors");
 const Chatroom = require("./models/Chatroom");
 const Message = require("./models/Message");
 const { markMessagesAsReceived } = require("./controllers/messageController");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser());
 app.get("/health", (req, res) => {
   res.send("Server is running");
 });

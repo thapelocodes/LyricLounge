@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/refresh-token", refreshToken);
+router.get("/refresh-token", refreshToken);
 router
   .route("/profile")
   .get(authMiddleware, fetchUserProfile)

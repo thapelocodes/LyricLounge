@@ -1,75 +1,66 @@
 import axios from "axios";
 
-let apiBase = axios.create({ baseURL: "/api" });
+let apiBase = axios.create({ baseURL: process.env.REACT_APP_API_URL });
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+function onRefreshed(token) {
+  refreshSubscribers.map((callback) => callback(token));
+  refreshSubscribers = [];
+}
+
+function addRefreshSubscriber(callback) {
+  refreshSubscribers.push(callback);
+}
 
 // Configure interceptors
 export const configAPI = (store, logoutUser, tokenRefresher) => {
   apiBase.interceptors.request.use(
-    async (config) => {
-      const token =
-        sessionStorage.getItem("token") || localStorage.getItem("token");
-      console.log("Current Token:", token);
-
-      const tokenExpiry =
-        sessionStorage.getItem("tokenExpiry") ||
-        localStorage.getItem("tokenExpiry");
-      console.log("Current Token expiry:", tokenExpiry);
-
-      const refreshToken =
-        sessionStorage.getItem("refreshToken") ||
-        localStorage.getItem("refreshToken");
-      console.log("Current Refresh token:", refreshToken);
-
-      const fiveMinutesFromNow = Math.floor(
-        (Date.now() + 5 * 60 * 1000) / 1000
-      );
-      console.log("Five minutes from now:", fiveMinutesFromNow);
-      console.log("Current time:", Math.floor(Date.now() / 1000));
-      if (token) {
-        if (tokenExpiry <= fiveMinutesFromNow) {
-          if (tokenExpiry <= Date.now() / 1000) {
-            console.log("Token expired. Logging out...");
-            store.dispatch(logoutUser());
-            return (window.location.href = "/login");
-          }
-          console.log("Token about to expire. Refreshing token...");
-          const {
-            token: newToken,
-            refreshToken: newRefreshToken,
-            tokenExpiry: newTokenExpiry,
-          } = await store.dispatch(tokenRefresher(refreshToken));
-          console.log("New token:", newToken);
-          console.log("New refresh token:", newRefreshToken);
-          console.log("New token expiry:", newTokenExpiry);
-          config.headers.Authorization = `Bearer ${newToken}`;
-          //     try {
-          //       const {
-          //         token: newToken,
-          //         refreshToken: newRefreshToken,
-          //         tokenExpiry: newTokenExpiry,
-          //       } = await apiBase.post("/auth/refresh-token", { refreshToken });
-          //       console.log("New token:", newToken);
-          //       console.log("New refresh token:", newRefreshToken);
-          //       console.log("New token expiry:", newTokenExpiry);
-          //       config.headers.Authorization = `Bearer ${newToken}`;
-          //       sessionStorage.setItem("token", newToken);
-          //       localStorage.setItem("token", newToken);
-          //       sessionStorage.setItem("refreshToken", newRefreshToken);
-          //       localStorage.setItem("refreshToken", newRefreshToken);
-          //       sessionStorage.setItem("tokenExpiry", newTokenExpiry);
-          //       localStorage.setItem("tokenExpiry", newTokenExpiry);
-          //     } catch (error) {
-          //       console.error("Error refreshing token:", error);
-          //       alert(`Session expired. Please log in again. ${error}`);
-          //       return (window.location.href = "/login");
-          //     }
-          // window.location.href = "/login";
-        } else config.headers.Authorization = `Bearer ${token}`;
-      }
+    (config) => {
+      const token = store.getState().auth.token;
+      config.headers.authorization = `Bearer ${token}`;
       return config;
     },
-    (error) => {
-      Promise.reject(error);
+    (error) => Promise.reject(error)
+  );
+
+  apiBase.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
+
+      if (
+        error.response.status === 403 &&
+        error.response.data.message === "Unauthorized" &&
+        !originalRequest._retry
+      ) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          try {
+            const { token } = await store.dispatch(tokenRefresher());
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            originalRequest._retry = true;
+            isRefreshing = false;
+            onRefreshed(token);
+            return apiBase(originalRequest);
+          } catch (error) {
+            isRefreshing = false;
+            store.dispatch(logoutUser());
+            window.location.href = "/login";
+            return Promise.reject(error);
+          }
+        }
+        const retryOriginalRequest = new Promise((resolve) => {
+          addRefreshSubscriber((newToken) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(apiBase(originalRequest));
+          });
+        });
+
+        return retryOriginalRequest;
+      }
+
+      return Promise.reject(error);
     }
   );
 };

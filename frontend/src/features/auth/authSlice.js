@@ -65,11 +65,10 @@ export const fetchProfile = createAsyncThunk(
 
 export const tokenRefresher = createAsyncThunk(
   "auth/tokenRefresher",
-  async (refreshToken, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await apiBase.post("/users/refresh-token", {
-        refreshToken,
-      });
+      const response = await apiBase.get("/users/refresh-token");
+      console.log("Refresh token response:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error refreshing token:", error);
@@ -82,36 +81,15 @@ export const tokenRefresher = createAsyncThunk(
 
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
-  sessionStorage.removeItem("token");
-  sessionStorage.removeItem("refreshToken");
-  sessionStorage.removeItem("tokenExpiry");
-  sessionStorage.removeItem("user");
-  localStorage.removeItem("token");
-  localStorage.removeItem("tokenExpiry");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
 };
 
 const initialState = {
-  user:
-    JSON.parse(sessionStorage.getItem("user")) ||
-    JSON.parse(localStorage.getItem("user")) ||
-    null,
-  token:
-    sessionStorage.getItem("token") || localStorage.getItem("token") || null,
-  tokenExpiry:
-    sessionStorage.getItem("tokenExpiry") ||
-    localStorage.getItem("tokenExpiry") ||
-    null,
-  refreshToken:
-    sessionStorage.getItem("refreshToken") ||
-    localStorage.getItem("refreshToken") ||
-    null,
+  user: null,
+  token: null,
   loading: false,
   error: null,
   success: false,
-  isAuthenticated:
-    !!sessionStorage.getItem("token") || !!localStorage.getItem("token"),
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -136,21 +114,7 @@ const authSlice = createSlice({
         state.user = action.payload;
         console.log("Payload:", action.payload);
         state.token = action.payload.token;
-        state.tokenExpiry = action.payload.tokenExpiry;
-        state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
-        sessionStorage.setItem("user", JSON.stringify(action.payload));
-        localStorage.setItem("user", JSON.stringify(action.payload));
-        console.log(
-          "user stored in localStorage:",
-          JSON.parse(localStorage.getItem("user"))
-        );
-        sessionStorage.setItem("token", action.payload.token);
-        localStorage.setItem("token", action.payload.token);
-        sessionStorage.setItem("tokenExpiry", action.payload.tokenExpiry);
-        localStorage.setItem("tokenExpiry", action.payload.tokenExpiry);
-        sessionStorage.setItem("refreshToken", action.payload.refreshToken);
-        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -179,8 +143,6 @@ const authSlice = createSlice({
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        sessionStorage.setItem("user", JSON.stringify(action.payload));
-        localStorage.setItem("user", JSON.stringify(action.payload));
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;
@@ -203,16 +165,8 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(tokenRefresher.fulfilled, (state, action) => {
-        const { token, refreshToken, tokenExpiry } = action.payload;
+        const { token } = action.payload;
         state.token = token;
-        state.refreshToken = refreshToken;
-        state.tokenExpiry = tokenExpiry;
-        sessionStorage.setItem("token", token);
-        localStorage.setItem("token", token);
-        sessionStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        sessionStorage.setItem("tokenExpiry", tokenExpiry);
-        localStorage.setItem("tokenExpiry", tokenExpiry);
       })
       .addCase(tokenRefresher.rejected, (state, action) => {
         state.error = action.payload;
@@ -220,5 +174,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setToken } = authSlice.actions;
 export default authSlice.reducer;

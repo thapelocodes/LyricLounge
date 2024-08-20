@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
-const RefreshToken = require("../models/RefreshToken");
-const path = require("path");
 
 // Generate tokens
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+const generateAccessToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
+  });
 };
 
 const generateRefreshToken = (id) => {
@@ -49,27 +49,28 @@ const loginUser = async (req, res) => {
       ? await User.findOne({ email: login })
       : await User.findOne({ username: login });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const accessToken = generateToken(user._id);
+      req.user = user;
       const refreshToken = generateRefreshToken(user._id);
+      const accessToken = generateAccessToken(user._id);
 
-      await RefreshToken.deleteMany({ userId: user._id });
-      await RefreshToken.create({
-        userId: user._id,
-        token: refreshToken,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
       });
+
+      console.log("res.cookie", res.cookie);
 
       res.json({
         _id: user._id,
         username: user.username,
         email: user.email,
         token: accessToken,
-        refreshToken,
         bio: user.bio,
-        tokenExpiry: jwt.decode(accessToken).exp,
+        profilePicture: user.profilePicture,
       });
     } else {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Invalid login or password" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -78,38 +79,16 @@ const loginUser = async (req, res) => {
 
 // Refresh token
 const refreshToken = async (req, res) => {
-  const { refreshToken: oldRefreshToken } = req.body;
-  if (!oldRefreshToken) {
-    return res.status(403).json({ message: "Access is forbidden" });
-  }
+  console.log("req.cookies:", req.cookies);
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken)
+    return res.status(401).json({ message: "No refresh token found" });
 
   try {
-    const tokenDoc = await RefreshToken.findOne({
-      token: oldRefreshToken,
-      expiresAt: { $gte: new Date() },
-    });
-    if (!tokenDoc)
-      return res.status(401).json({ message: "Invalid refresh token" });
-
-    const decoded = jwt.verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET);
-    const user = await User.findById(decoded.id).select("-password");
-
-    if (!user) return res.status(401).json({ message: "User not found" });
-
-    const newAccessToken = generateToken(user._id);
-    const newRefreshToken = generateRefreshToken(user._id);
-
-    await RefreshToken.deleteOne({ token: oldRefreshToken });
-    await RefreshToken.create({
-      userId: user._id,
-      token: newRefreshToken,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    });
+    const newAccessToken = generateAccessToken(refreshToken);
 
     res.json({
       token: newAccessToken,
-      refreshToken: newRefreshToken,
-      tokenExpiry: jwt.decode(newAccessToken).exp,
     });
   } catch (error) {
     res.status(401).json({ message: "Invalid refresh token" });
