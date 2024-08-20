@@ -79,17 +79,15 @@ const loginUser = async (req, res) => {
 
 // Refresh token
 const refreshToken = async (req, res) => {
-  console.log("req.cookies:", req.cookies);
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken)
     return res.status(401).json({ message: "No refresh token found" });
 
   try {
-    const newAccessToken = generateAccessToken(refreshToken);
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const newAccessToken = generateAccessToken(decoded.id);
 
-    res.json({
-      token: newAccessToken,
-    });
+    res.json({ token: newAccessToken });
   } catch (error) {
     res.status(401).json({ message: "Invalid refresh token" });
   }
