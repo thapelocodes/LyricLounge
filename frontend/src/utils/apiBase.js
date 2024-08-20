@@ -29,15 +29,11 @@ export const configAPI = (store, logoutUser, tokenRefresher) => {
     async (error) => {
       const originalRequest = error.config;
 
-      if (
-        error.response.status === 401 &&
-        error.response.data.message === "Unauthorized" &&
-        !originalRequest._retry
-      ) {
+      if (error.response.status === 401 && !originalRequest._retry) {
         if (!isRefreshing) {
           isRefreshing = true;
           try {
-            const { token } = await store.dispatch(tokenRefresher());
+            const { token } = await store.dispatch(tokenRefresher()).unwrap();
             originalRequest.headers.Authorization = `Bearer ${token}`;
             originalRequest._retry = true;
             isRefreshing = false;
@@ -50,6 +46,7 @@ export const configAPI = (store, logoutUser, tokenRefresher) => {
             return Promise.reject(error);
           }
         }
+
         const retryOriginalRequest = new Promise((resolve) => {
           addRefreshSubscriber((newToken) => {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
