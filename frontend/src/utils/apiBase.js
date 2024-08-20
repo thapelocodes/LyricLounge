@@ -30,7 +30,7 @@ export const configAPI = (store, logoutUser, tokenRefresher) => {
       const originalRequest = error.config;
 
       if (
-        error.response.status === 403 &&
+        error.response.status === 401 &&
         error.response.data.message === "Unauthorized" &&
         !originalRequest._retry
       ) {
