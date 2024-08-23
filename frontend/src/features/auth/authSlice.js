@@ -6,7 +6,6 @@ export const loginUser = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await apiBase.post("/users/login", formData);
-      console.log("login response:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -55,7 +54,6 @@ export const fetchProfile = createAsyncThunk(
       const { data } = await apiBase.get("/users/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Data:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -68,10 +66,8 @@ export const tokenRefresher = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiBase.get("/users/refresh-token");
-      console.log("Refresh token response:", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error refreshing token:", error);
       return rejectWithValue(
         error.response.data || "An error occurred while refreshing token"
       );
@@ -83,17 +79,13 @@ export const logoutUser = () => (dispatch) => {
   dispatch(logout());
 };
 
-const persistedState = JSON.parse(localStorage.getItem("persist:root"));
-const user = JSON.parse(persistedState.user);
-const token = JSON.parse(persistedState.token);
-
 const initialState = {
-  user,
-  token,
+  user: null,
+  token: null,
   loading: false,
   error: null,
   success: false,
-  isAuthenticated: false, //!!localStorage.getItem("token"),
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -116,10 +108,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        // localStorage.setItem("user", JSON.stringify(action.payload));
-        console.log("Payload:", action.payload);
         state.token = action.payload.token;
-        // localStorage.setItem("token", action.payload.token);
         state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -143,7 +132,6 @@ const authSlice = createSlice({
         state.success = false;
       })
       .addCase(updateProfile.pending, (state) => {
-        // state.loading = true;
         state.error = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
@@ -153,10 +141,8 @@ const authSlice = createSlice({
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        console.log("Error updating profile:", action.payload);
       })
       .addCase(fetchProfile.pending, (state) => {
-        // state.loading = true;
         state.error = null;
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
@@ -173,7 +159,6 @@ const authSlice = createSlice({
       .addCase(tokenRefresher.fulfilled, (state, action) => {
         const { token } = action.payload;
         state.token = token;
-        // localStorage.setItem("token", token);
       })
       .addCase(tokenRefresher.rejected, (state, action) => {
         state.error = action.payload;
