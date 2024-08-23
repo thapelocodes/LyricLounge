@@ -33,15 +33,11 @@ export const WebSocketProvider = ({ children }) => {
       const newSocket = new WebSocket("ws://localhost:5000");
 
       newSocket.onopen = () => {
-        console.log("WebSocket connection opened");
         newSocket.send(JSON.stringify({ type: "authenticate", token }));
       };
 
       newSocket.onmessage = (e) => {
-        console.log("Event:", e);
         const message = JSON.parse(e.data);
-        console.log("WebSocket message received:", message);
-        console.log("Open chatroom ID:", openChatroomIdRef.current);
         if (message.type === "chatMessage") {
           if (
             openChatroomIdRef.current &&
@@ -55,7 +51,6 @@ export const WebSocketProvider = ({ children }) => {
       };
 
       newSocket.onclose = () => {
-        console.log("WebSocket connection closed");
         setSocket(null);
       };
 
