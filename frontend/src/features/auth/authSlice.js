@@ -81,15 +81,16 @@ export const tokenRefresher = createAsyncThunk(
 
 export const logoutUser = () => (dispatch) => {
   dispatch(logout());
+  localStorage.clear();
 };
 
 const initialState = {
-  user: null,
-  token: null,
+  user: JSON.parse(localStorage.getItem("user")),
+  token: localStorage.getItem("token"),
   loading: false,
   error: null,
   success: false,
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem("token"),
 };
 
 const authSlice = createSlice({
@@ -112,8 +113,10 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
         console.log("Payload:", action.payload);
         state.token = action.payload.token;
+        localStorage.setItem("token", action.payload.token);
         state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -167,6 +170,7 @@ const authSlice = createSlice({
       .addCase(tokenRefresher.fulfilled, (state, action) => {
         const { token } = action.payload;
         state.token = token;
+        localStorage.setItem("token", token);
       })
       .addCase(tokenRefresher.rejected, (state, action) => {
         state.error = action.payload;
