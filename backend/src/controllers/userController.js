@@ -97,10 +97,20 @@ const refreshToken = async (req, res) => {
 const fetchUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId);
-    if (!user) {
+    const userFromDB = await User.findById(userId);
+    if (!userFromDB) {
       return res.status(404).json({ message: "User not found" });
     }
+    const user = {
+      _id: userFromDB._id,
+      username: userFromDB.username,
+      email: userFromDB.email,
+      chatrooms: userFromDB.chatrooms,
+      __v: userFromDB.__v,
+      bio: userFromDB.bio,
+      profilePicture: userFromDB.profilePicture,
+    };
+    console.log("user", user);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
