@@ -26,7 +26,9 @@ const MessageBox = styled(Box)(({ theme }) => ({
   position: "relative",
 }));
 
-const MessageBoxHeader = styled(AppBar)(({ theme }) => ({}));
+const MessageBoxHeader = styled(AppBar)(({ theme }) => ({
+  height: 60,
+}));
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -65,16 +67,17 @@ const StyledMessageForm = styled("form")(({ theme }) => ({
   position: "fixed",
   bottom: 0,
   width: "100%",
-  backgroundColor: "#fff",
+  height: 50,
+  backgroundColor: "#f0f0f0",
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: 25,
     height: 40,
-    marginBottom: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    maxWidth: "calc(100% - 30px)",
+    // marginBottom: theme.spacing(1),
+    // marginLeft: theme.spacing(1),
+    // maxWidth: "calc(100% - 30px)",
   },
   height: 40,
 }));
@@ -182,7 +185,7 @@ const OpenChatRoom = ({ chatRoom }) => {
         )}
       </MessageBox>
       <StyledMessageForm onSubmit={handleSendMessage}>
-        <EmojiButton variant="contained" onClick={handlePickerVisibility}>
+        <EmojiButton variant="none" onClick={handlePickerVisibility}>
           <InsertEmoticonOutlinedIcon />
         </EmojiButton>
         <StyledTextField
@@ -198,7 +201,7 @@ const OpenChatRoom = ({ chatRoom }) => {
             <EmojiPicker onEmojiClick={onEmojiClick} /*emojiStyle="native"*/ />
           </Box>
         )}
-        <StyledButton variant="contained" color="primary" type="submit">
+        <StyledButton variant="none" color="primary" type="submit">
           <SendRoundedIcon />
         </StyledButton>
       </StyledMessageForm>
