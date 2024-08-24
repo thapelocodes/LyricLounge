@@ -14,25 +14,19 @@ import {
   CardActions,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import EmojiPicker from "emoji-picker-react";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import InsertEmoticonOutlinedIcon from "@mui/icons-material/InsertEmoticonOutlined";
 
 const MessageBox = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(10),
-  paffingTop: theme.spacing(2),
+  paddingTop: theme.spacing(2),
   overflowY: "auto",
   marginBottom: theme.spacing(8),
   position: "relative",
 }));
 
-const MessageBoxHeader = styled(AppBar)(({ theme }) => ({
-  // width: "100%",
-  // display: "flex",
-  // justifyContent: "space-between",
-  // alignContent: "center",
-  // position: "fixed",
-  // zIndex: 100,
-  // top: 0,
-  // backgroundColor: theme.palette.primary.main,
-}));
+const MessageBoxHeader = styled(AppBar)(({ theme }) => ({}));
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -41,6 +35,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 const MessageCard = styled(Card)(({ theme, owner }) => ({
   maxWidth: "65%",
+  minHeight: 25,
   marginBottom: theme.spacing(1),
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(1),
@@ -76,12 +71,12 @@ const StyledMessageForm = styled("form")(({ theme }) => ({
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: 25,
-    height: 50,
+    height: 40,
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(1),
     maxWidth: "calc(100% - 30px)",
   },
-  height: 50,
+  height: 40,
 }));
 
 const StyledButton = styled(Button)(({ theme, color }) => ({
@@ -94,15 +89,31 @@ const StyledButton = styled(Button)(({ theme, color }) => ({
   }),
 }));
 
+const EmojiButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  marginRight: theme.spacing(1),
+}));
+
 const OpenChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line
   const messages =
     useSelector((state) => state.chat.messages[chatRoom._id]) || [];
   const [content, setContent] = useState("");
   const { sendMessage: sendWebSocketMessage } = useWebSocket();
   const username = useSelector((state) => state.auth.user.username);
   const messageBoxRef = useRef(null);
+  const inputRef = useRef(null);
+  const [isPickerVisible, setIsPickerVisible] = useState(false); // Emoji picker visibility state
+
+  const handlePickerVisibility = () => {
+    inputRef.current.focus();
+    setIsPickerVisible(!isPickerVisible);
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setContent((prevContent) => prevContent + emojiObject.emoji); // Append emoji to the message content
+  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -115,6 +126,7 @@ const OpenChatRoom = ({ chatRoom }) => {
     dispatch(sendMessage(message));
     sendWebSocketMessage(message);
     setContent("");
+    setIsPickerVisible(false);
   };
 
   const handleCloseChatroom = () => dispatch(setOpenChatroom(null));
@@ -126,7 +138,6 @@ const OpenChatRoom = ({ chatRoom }) => {
 
   useEffect(() => {
     messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
-    // set the scroll to the bottom of the window/page
     window.scroll(0, document.body.scrollHeight);
   }, [messages]);
 
@@ -171,15 +182,24 @@ const OpenChatRoom = ({ chatRoom }) => {
         )}
       </MessageBox>
       <StyledMessageForm onSubmit={handleSendMessage}>
+        <EmojiButton variant="contained" onClick={handlePickerVisibility}>
+          <InsertEmoticonOutlinedIcon />
+        </EmojiButton>
         <StyledTextField
           fullWidth
           variant="outlined"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Type a message..."
+          ref={inputRef}
         />
+        {isPickerVisible && (
+          <Box sx={{ position: "absolute", bottom: "60px", right: "10px" }}>
+            <EmojiPicker onEmojiClick={onEmojiClick} /*emojiStyle="native"*/ />
+          </Box>
+        )}
         <StyledButton variant="contained" color="primary" type="submit">
-          Send
+          <SendRoundedIcon />
         </StyledButton>
       </StyledMessageForm>
     </Box>
