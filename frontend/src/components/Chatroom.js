@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   joinChatroom,
@@ -10,8 +10,22 @@ import { Card, CardContent, Typography, Button, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  display: "flex",
+  // marginBottom: theme.spacing(2),
+  "&:not(:last-child)": {
+    borderBottom: `1px solid ${theme.palette.border.dark}`,
+  },
+  // display: "flex",
+  borderRadius: 0,
+  boxShadow: "none",
+  backgroundColor: theme.palette.background.default,
+  height: "80px",
+  "&:hover": {
+    // backgroundColor: theme.palette.background.paper,
+    cursor: "pointer",
+  },
+  // "&:hover :only-child": {
+  //   backgroundColor: theme.palette.background.paper,
+  // },
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -22,13 +36,24 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const StyledBox = styled(Box)(({ theme }) => ({
+  margin: "auto auto auto 0",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  width: "70%",
+  // border: `1px solid ${theme.palette.secondary.main}`,
+}));
+
 const StyledNotification = styled(Typography)(({ theme }) => ({
   color: "whitesmoke",
-  backgroundColor: theme.palette.secondary.main,
+  border: `1px solid ${theme.palette.secondary.main}`,
+  backgroundColor: theme.palette.secondary.light,
   textAlign: "center",
-  maxWidth: "1.4rem",
+  width: "1.5rem",
+  height: "1.5rem",
   borderRadius: "50%",
-  right: 0,
+  left: -10,
   "@keyframes bounce": {
     "0%, 20%, 50%, 80%, 100%": {
       transform: "translateY(0)",
@@ -44,7 +69,25 @@ const StyledNotification = styled(Typography)(({ theme }) => ({
   "&:hover": {
     animation: "bounce 1s",
   },
-  marginTop: theme.spacing(1),
+  margin: theme.spacing(2),
+}));
+
+const JoinAlert = styled(Box)(({ theme }) => ({
+  position: "fixed",
+  padding: theme.spacing(1),
+  top: "45%",
+  left: "10%",
+  zIndex: 10,
+  backgroundColor: theme.palette.background.paper,
+  // "&:hover": {
+  //   backgroundColor: theme.palette.background.paper,
+  // },
+  borderRadius: 10,
+  // display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "75%",
+  boxShadow: `-1px -1px 3px ${theme.palette.primary.main}, 1px 1px 3px ${theme.palette.secondary.main}`,
 }));
 
 const ChatRoom = ({ chatRoom }) => {
@@ -53,6 +96,9 @@ const ChatRoom = ({ chatRoom }) => {
   const isMember = userChatrooms.some((c) => c._id === chatRoom._id);
   const notificationsRef = useRef();
   const chatroomNotifications = notifications[chatRoom._id];
+  const [windowSize, setWindowSize] = useState();
+  const [openOptions, setOpenOptions] = useState(false);
+  const openOptionsRef = useRef();
 
   const onJoin = (chatroomId) => {
     dispatch(joinChatroom(chatroomId));
@@ -67,6 +113,18 @@ const ChatRoom = ({ chatRoom }) => {
     dispatch(fetchChatHistory(chatroomId));
   };
 
+  const onOpenOptions = () => {
+    setOpenOptions(true);
+  };
+
+  const handleOutsideClick = (event) => {
+    if (
+      openOptionsRef.current &&
+      !openOptionsRef.current.contains(event.target)
+    )
+      setOpenOptions(false);
+  };
+
   useEffect(() => {
     if (notificationsRef.current) {
       notificationsRef.current.style.animation = "bounce 1s";
@@ -77,17 +135,85 @@ const ChatRoom = ({ chatRoom }) => {
     }
   }, [chatroomNotifications]);
 
+  useEffect(() => {
+    if (window !== undefined) {
+      setWindowSize(window.innerWidth);
+      const handleResize = () => {
+        setWindowSize(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (openOptions) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  });
+
   return (
-    <StyledCard>
-      <CardContent>
-        <Typography variant="h6">{chatRoom.name}</Typography>
-        <Typography variant="body2" color="textSecondary">
-          {chatRoom.description}
-        </Typography>
-        <StyledNotification ref={notificationsRef}>
-          {notifications[chatRoom._id] > 0 && notifications[chatRoom._id]}
+    <StyledCard
+      onClick={() => (isMember ? onOpen(chatRoom._id) : onOpenOptions())}
+    >
+      <CardContent
+        style={{
+          padding: 0,
+          paddingLeft: 7.5,
+          margin: 0,
+          width: "100%",
+          height: "100%",
+          // borderRadius: windowSize < 768 ? 5 : 25,
+          display: "flex",
+        }}
+      >
+        <StyledBox>
+          <Typography variant={windowSize < 768 ? "body1" : "h6"}>
+            {chatRoom.name}
+          </Typography>
+          <Typography
+            variant={windowSize < 768 ? "body1" : "h6"}
+            color="textSecondary"
+          >
+            {chatRoom.description}
+          </Typography>
+        </StyledBox>
+        <StyledNotification
+          ref={notificationsRef}
+          style={{ visibility: chatroomNotifications ? "visible" : "hidden" }}
+        >
+          {chatroomNotifications > 0 && chatroomNotifications}
         </StyledNotification>
-        <Box mt={2}>
+        {openOptions && (
+          <JoinAlert ref={openOptionsRef}>
+            <Typography variant={windowSize < 768 ? "body3" : "body2"}>
+              You are not a member. Join {chatRoom.name}?
+            </Typography>
+            <StyledButton
+              variant="contained"
+              color="primary"
+              onClick={() => onJoin(chatRoom._id)}
+              style={{
+                transform: windowSize < 768 ? "scale(0.55)" : "scale(1)",
+                margin: "auto",
+                alignSelf: "center",
+              }}
+            >
+              Join
+            </StyledButton>
+          </JoinAlert>
+        )}
+        {/* <Box mt={2}>
           {isMember ? (
             <>
               <StyledButton
@@ -115,7 +241,7 @@ const ChatRoom = ({ chatRoom }) => {
               Join
             </StyledButton>
           )}
-        </Box>
+        </Box> */}
       </CardContent>
     </StyledCard>
   );

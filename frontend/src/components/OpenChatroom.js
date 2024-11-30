@@ -17,6 +17,8 @@ import { styled } from "@mui/material/styles";
 import EmojiPicker from "emoji-picker-react";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import InsertEmoticonOutlinedIcon from "@mui/icons-material/InsertEmoticonOutlined";
+import BackIcon from "@mui/icons-material/ArrowBack";
+import OptionsIcon from "@mui/icons-material/MoreVert";
 
 const MessageBox = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(10),
@@ -24,10 +26,14 @@ const MessageBox = styled(Box)(({ theme }) => ({
   overflowY: "auto",
   marginBottom: theme.spacing(8),
   position: "relative",
+  height: window.innerWidth < 1024 ? "100%" : "70vh",
 }));
 
 const MessageBoxHeader = styled(AppBar)(({ theme }) => ({
   height: 60,
+  // display: window.innerWidth < 1024 ? "block" : "none",
+  width: window.innerWidth < 1024 ? "100%" : "50%",
+  top: window.innerWidth < 1024 ? "none" : theme.spacing(8),
 }));
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -66,7 +72,7 @@ const StyledMessageForm = styled("form")(({ theme }) => ({
   alignItems: "center",
   position: "fixed",
   bottom: 0,
-  width: "100%",
+  width: window.innerWidth < 1024 ? "100%" : "50%",
   height: 50,
   backgroundColor: "#f0f0f0",
 }));
@@ -87,9 +93,19 @@ const StyledButton = styled(Button)(({ theme, color }) => ({
   marginRight: theme.spacing(2),
   marginLeft: theme.spacing(1),
 
-  ...(color === "secondary" && {
+  ...(color === "primary" && {
     marginRight: theme.spacing(0),
   }),
+}));
+
+const StyledHeaderButton = styled("div")(({ theme }) => ({
+  borderRadius: "50%",
+  padding: theme.spacing(1),
+  "&:hover": {
+    backgroundColor: "rgb(240, 240, 240, 0.1)",
+    cursor: "pointer",
+    // boxShadow: "0px 1px 2px",
+  },
 }));
 
 const EmojiButton = styled(Button)(({ theme }) => ({
@@ -145,19 +161,18 @@ const OpenChatRoom = ({ chatRoom }) => {
   }, [messages]);
 
   return (
-    <Box>
+    <Box style={{ height: window.innerWidth < 1024 ? "100%" : "50vh" }}>
       <MessageBoxHeader>
         <StyledToolbar>
+          <StyledHeaderButton onClick={handleCloseChatroom}>
+            <BackIcon />
+          </StyledHeaderButton>
           <Typography variant="h6" color="white">
             {chatRoom.name}
           </Typography>
-          <StyledButton
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseChatroom}
-          >
-            Close
-          </StyledButton>
+          <StyledHeaderButton>
+            <OptionsIcon />
+          </StyledHeaderButton>
         </StyledToolbar>
       </MessageBoxHeader>
       <MessageBox ref={messageBoxRef}>

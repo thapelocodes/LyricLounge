@@ -5,8 +5,8 @@ import { styled } from "@mui/material/styles";
 const StyledFooter = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   textAlign: "center",
-  marginTop: theme.spacing(4),
   borderTop: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.background.default,
 }));
 
 export const Footer = () => {

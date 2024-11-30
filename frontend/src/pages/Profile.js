@@ -19,25 +19,34 @@ import { styled } from "@mui/material/styles";
 const StyledContainer = styled(Container)(({ theme }) => ({
   padding: theme.spacing(4),
   [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   },
-  marginTop: theme.spacing(8),
+  marginTop: theme.spacing(6),
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  maxWidth: 600,
+  // maxWidth: 600,
   margin: "auto",
-  padding: theme.spacing(2),
-  marginBottom: theme.spacing(2),
+  padding: theme.spacing(1),
+  // marginBottom: theme.spacing(2),
+  boxShadow: "none",
+  borderRadius: 0,
 }));
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: 100,
-  height: 100,
+  width: window.innerWidth < 768 ? 75 : 100,
+  height: window.innerWidth < 768 ? 75 : 100,
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
+}));
+
+const StyledCover = styled("div")(({ theme }) => ({
+  height: window.innerWidth < 768 ? 100 : 300,
+  backgroundImage: `url(${require("../assets/profile-user_64572.png")})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
 }));
 
 export const Profile = () => {
@@ -123,16 +132,13 @@ export const Profile = () => {
 
   return (
     <StyledContainer>
-      <Typography variant="h4" gutterBottom>
-        Profile
-      </Typography>
       {loading && <Typography>Loading...</Typography>}
       {!loading && profile && (
-        <StyledCard>
-          <CardContent>
-            {!isEditing ? (
-              <>
-                <Box display="flex" alignItems="center" mb={2}>
+        <div>
+          {!isEditing ? (
+            <>
+              <Box alignItems="center" mb={2}>
+                <StyledCover>
                   <StyledAvatar
                     src={
                       profile && profile.profilePicture
@@ -144,42 +150,38 @@ export const Profile = () => {
                     }
                     alt="Profile"
                   />
-                  <Box ml={2}>
-                    <Typography variant="h6">
-                      {user && user.username}
-                    </Typography>
-                    <Typography variant="body1">
-                      {user && user.email}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {user && user.bio}
-                    </Typography>
-                  </Box>
+                </StyledCover>
+                <Box ml={2}>
+                  <Typography variant="h6">{user && user.username}</Typography>
+                  <Typography variant="body1">{user && user.email}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {user && user.bio}
+                  </Typography>
                 </Box>
-                {user && (
-                  <StyledButton
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit Profile
-                  </StyledButton>
-                )}
-              </>
-            ) : (
-              <ProfileForm
-                formData={formData}
-                onChange={onChange}
-                onSubmit={onSubmit}
-                setIsEditing={setIsEditing}
-                errors={errors}
-                loading={loading}
-                hasChanges={hasChanges}
-                onFileChange={onFileChange}
-              />
-            )}
-          </CardContent>
-        </StyledCard>
+              </Box>
+              {user && (
+                <StyledButton
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </StyledButton>
+              )}
+            </>
+          ) : (
+            <ProfileForm
+              formData={formData}
+              onChange={onChange}
+              onSubmit={onSubmit}
+              setIsEditing={setIsEditing}
+              errors={errors}
+              loading={loading}
+              hasChanges={hasChanges}
+              onFileChange={onFileChange}
+            />
+          )}
+        </div>
       )}
     </StyledContainer>
   );

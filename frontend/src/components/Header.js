@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const StyledHeader = styled(Box)(({ theme }) => ({
@@ -11,9 +11,5 @@ const StyledHeader = styled(Box)(({ theme }) => ({
 }));
 
 export const Header = () => {
-  return (
-    <StyledHeader>
-      <Typography variant="h4">LyricLounge</Typography>
-    </StyledHeader>
-  );
+  return <StyledHeader />;
 };
