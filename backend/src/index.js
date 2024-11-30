@@ -21,7 +21,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: "*",
+    origin: ["*", "https://lyric-lounge.vercel.app/"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
