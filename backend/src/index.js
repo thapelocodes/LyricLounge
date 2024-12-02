@@ -32,7 +32,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
-  res.send("Backend server is running");
+  res.send("Welcome to the Lyric Lounge API");
 });
 app.get("/health", (req, res) => {
   res.send("Server is running");
