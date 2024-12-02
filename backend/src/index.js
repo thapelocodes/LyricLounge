@@ -21,13 +21,19 @@ connectDB();
 
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "https://lyric-lounge.vercel.app",
+      "https://lyric-lounge-thapelos-projects-7c628723.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
 app.use(cookieParser());
+app.get("/", (req, res) => {
+  res.send("Backend server is running");
+});
 app.get("/health", (req, res) => {
   res.send("Server is running");
 });
