@@ -6,7 +6,7 @@ import { Login } from "./pages/Login";
 import { PrivateRoute } from "./routes/protectedRoutes";
 import { Profile } from "./pages/Profile";
 import { Navbar } from "./components/Navbar";
-import { Chatrooms } from "./pages/Chatrooms";
+import { Chatrooms } from "./pages/Chat";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme/theme";
 

@@ -25,14 +25,12 @@ import CloseIcon from "@mui/icons-material/Close";
 const Container = styled("div")(({ theme }) => ({
   marginTop: theme.spacing(12),
   borderRadius: "0px",
-  height: window.innerWidth < 1024 ? "100%" : "calc(100vh - 66px)",
 }));
 
 const SectionCard = styled(Card)(({ theme }) => ({
   borderRadius: "20px",
   boxShadow: "none",
   backgroundColor: theme.palette.background.default,
-  height: window.innerWidth < 640 ? "50vh" : "70vh",
   overflowY: "auto",
   scrollbarWidth: "none",
   // "&:not(:last-child)": {
@@ -71,6 +69,7 @@ export const Chatrooms = () => {
   const { chatrooms, userChatrooms, loading, error, openChatroomId } =
     useSelector((state) => state.chat);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [windowSize, setWindowSize] = useState(0);
 
   const handleOpenForm = () => {
     setIsFormOpen(!isFormOpen);
@@ -81,6 +80,22 @@ export const Chatrooms = () => {
     dispatch(fetchUserChatrooms());
     dispatch(fetchMessagesByMembership());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setWindowSize(window.innerWidth);
+
+      const handleResize = () => {
+        setWindowSize(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []);
 
   if (loading)
     return (
@@ -106,7 +121,11 @@ export const Chatrooms = () => {
       )}
     </Grid>
   ) : (
-    <Container>
+    <Container
+      style={{
+        height: windowSize < 1024 ? "100%" : "calc(100vh - 66px)",
+      }}
+    >
       <Grid container spacing={3}>
         <Grid item xs={12} sm={10} md={6} lg={3}>
           <Typography
@@ -117,7 +136,11 @@ export const Chatrooms = () => {
           >
             Your Chatrooms
           </Typography>
-          <SectionCard>
+          <SectionCard
+            style={{
+              height: windowSize < 640 ? "50vh" : "70vh",
+            }}
+          >
             <CardContent>
               {userChatrooms.map((chatRoom) => (
                 <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
@@ -134,7 +157,11 @@ export const Chatrooms = () => {
           >
             Public Chatrooms
           </Typography>
-          <SectionCard>
+          <SectionCard
+            style={{
+              height: windowSize < 640 ? "50vh" : "70vh",
+            }}
+          >
             <CardContent>
               {chatrooms.map((chatRoom) => (
                 <ChatRoom key={chatRoom._id} chatRoom={chatRoom} />
@@ -142,7 +169,7 @@ export const Chatrooms = () => {
             </CardContent>
           </SectionCard>
         </Grid>
-        {window.innerWidth >= 1024 && (
+        {windowSize >= 1024 && (
           <Grid item lg={6}>
             {openChatroomId && openChatroom && (
               <OpenChatRoom chatRoom={openChatroom} />

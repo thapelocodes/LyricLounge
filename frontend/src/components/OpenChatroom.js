@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenChatroom, sendMessage } from "../features/chat/chatSlice";
+import {
+  leaveChatroom,
+  setOpenChatroom,
+  sendMessage,
+} from "../features/chat/chatSlice";
 import { useWebSocket } from "../context/WebSocketContext";
 import {
   AppBar,
@@ -12,6 +16,8 @@ import {
   Card,
   CardContent,
   CardActions,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import EmojiPicker from "emoji-picker-react";
@@ -113,6 +119,8 @@ const EmojiButton = styled(Button)(({ theme }) => ({
   marginRight: theme.spacing(1),
 }));
 
+const StyledMenu = styled(Menu)(({ theme }) => ({}));
+
 const OpenChatRoom = ({ chatRoom }) => {
   const dispatch = useDispatch();
   // eslint-disable-next-line
@@ -124,6 +132,8 @@ const OpenChatRoom = ({ chatRoom }) => {
   const messageBoxRef = useRef(null);
   const inputRef = useRef(null);
   const [isPickerVisible, setIsPickerVisible] = useState(false); // Emoji picker visibility state
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
 
   const handlePickerVisibility = () => {
     inputRef.current.focus();
@@ -150,6 +160,19 @@ const OpenChatRoom = ({ chatRoom }) => {
 
   const handleCloseChatroom = () => dispatch(setOpenChatroom(null));
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLeaveChatroom = (chatroomId) => {
+    handleCloseChatroom();
+    dispatch(leaveChatroom(chatroomId));
+  };
+
   const formatter = new Intl.DateTimeFormat("en", {
     dateStyle: "short",
     timeStyle: "short",
@@ -170,9 +193,28 @@ const OpenChatRoom = ({ chatRoom }) => {
           <Typography variant="h6" color="white">
             {chatRoom.name}
           </Typography>
-          <StyledHeaderButton>
+          <StyledHeaderButton
+            id="chat-menu-button"
+            aria-controls={isMenuOpen ? "chat-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={isMenuOpen ? "true" : undefined}
+            onClick={isMenuOpen ? handleMenuClose : handleMenuOpen}
+          >
             <OptionsIcon />
           </StyledHeaderButton>
+          <StyledMenu
+            id="chat-menu"
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+            anchorEl={anchorEl}
+            anchorOrigin={{ vertical: 70, horizontal: "right" }}
+            onClick={handleMenuClose}
+            MenuListProps={{ "aria-labelledby": "chat-menu-button" }}
+          >
+            <MenuItem onClick={() => handleLeaveChatroom(chatRoom._id)}>
+              Leave
+            </MenuItem>
+          </StyledMenu>
         </StyledToolbar>
       </MessageBoxHeader>
       <MessageBox ref={messageBoxRef}>

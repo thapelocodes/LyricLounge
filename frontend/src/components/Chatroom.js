@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   joinChatroom,
-  leaveChatroom,
   setOpenChatroom,
   fetchChatHistory,
 } from "../features/chat/chatSlice";
@@ -73,20 +72,12 @@ const StyledNotification = styled(Typography)(({ theme }) => ({
 }));
 
 const JoinAlert = styled(Box)(({ theme }) => ({
-  position: "fixed",
   padding: theme.spacing(1),
   top: "45%",
   left: "10%",
   zIndex: 10,
   backgroundColor: theme.palette.background.paper,
-  // "&:hover": {
-  //   backgroundColor: theme.palette.background.paper,
-  // },
   borderRadius: 10,
-  // display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  width: "75%",
   boxShadow: `-1px -1px 3px ${theme.palette.primary.main}, 1px 1px 3px ${theme.palette.secondary.main}`,
 }));
 
@@ -101,11 +92,8 @@ const ChatRoom = ({ chatRoom }) => {
   const openOptionsRef = useRef();
 
   const onJoin = (chatroomId) => {
+    setOpenOptions(false);
     dispatch(joinChatroom(chatroomId));
-  };
-
-  const onLeave = (chatroomId) => {
-    dispatch(leaveChatroom(chatroomId));
   };
 
   const onOpen = (chatroomId) => {
@@ -114,7 +102,7 @@ const ChatRoom = ({ chatRoom }) => {
   };
 
   const onOpenOptions = () => {
-    setOpenOptions(true);
+    setOpenOptions(!openOptions);
   };
 
   const handleOutsideClick = (event) => {
@@ -194,23 +182,56 @@ const ChatRoom = ({ chatRoom }) => {
         >
           {chatroomNotifications > 0 && chatroomNotifications}
         </StyledNotification>
-        {openOptions && (
-          <JoinAlert ref={openOptionsRef}>
-            <Typography variant={windowSize < 768 ? "body3" : "body2"}>
-              You are not a member. Join {chatRoom.name}?
-            </Typography>
-            <StyledButton
-              variant="contained"
-              color="primary"
-              onClick={() => onJoin(chatRoom._id)}
+        {openOptions && !isMember && (
+          <JoinAlert
+            ref={openOptionsRef}
+            style={{
+              position: windowSize < 1024 ? "fixed" : "absolute",
+              width: windowSize < 1024 ? "75%" : "25%",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            <div
               style={{
-                transform: windowSize < 768 ? "scale(0.55)" : "scale(1)",
-                margin: "auto",
-                alignSelf: "center",
+                marginRight: "auto",
+                marginLeft: "auto",
+                display: windowSize < 1024 ? "block" : "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              Join
-            </StyledButton>
+              <Typography variant={windowSize < 768 ? "body3" : "body2"}>
+                You are not a member. Join {chatRoom.name}?
+              </Typography>
+              <div>
+                <StyledButton
+                  variant="outlined"
+                  color="error"
+                  onClick={() => onOpenOptions()}
+                  style={{
+                    transform: windowSize < 768 ? "scale(0.55)" : "scale(1)",
+                    margin: "auto",
+                    alignSelf: "center",
+                  }}
+                >
+                  Cancel
+                </StyledButton>
+                <StyledButton
+                  variant="contained"
+                  color="primary"
+                  onClick={() => onJoin(chatRoom._id)}
+                  style={{
+                    transform: windowSize < 768 ? "scale(0.55)" : "scale(1)",
+                    margin: "auto",
+                    alignSelf: "center",
+                  }}
+                >
+                  Join
+                </StyledButton>
+              </div>
+            </div>
           </JoinAlert>
         )}
         {/* <Box mt={2}>

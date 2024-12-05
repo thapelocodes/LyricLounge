@@ -36,6 +36,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   width: window.innerWidth < 768 ? 75 : 100,
   height: window.innerWidth < 768 ? 75 : 100,
+  backgroundColor: theme.palette.background.default,
+  // margin: "auto",
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -47,6 +49,8 @@ const StyledCover = styled("div")(({ theme }) => ({
   backgroundImage: `url(${require("../assets/profile-user_64572.png")})`,
   backgroundSize: "cover",
   backgroundPosition: "center",
+  display: "flex",
+  alignItems: "center",
 }));
 
 export const Profile = () => {
