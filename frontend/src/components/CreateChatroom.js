@@ -24,7 +24,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(1),
 }));
 
-const FormContainer = styled(Container)(({ theme }) => ({
+const FormContainer = styled("form")(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: 25,
     height: 35,
