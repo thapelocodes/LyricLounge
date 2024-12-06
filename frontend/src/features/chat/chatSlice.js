@@ -187,31 +187,24 @@ const chatSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchChatrooms.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(fetchChatrooms.fulfilled, (state, action) => {
         state.chatrooms = action.payload;
-        state.loading = false;
       })
       .addCase(fetchChatrooms.rejected, (state, action) => {
         state.error = action.error.message;
-        state.loading = false;
       })
       .addCase(fetchUserChatrooms.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(fetchUserChatrooms.fulfilled, (state, action) => {
         state.userChatrooms = action.payload;
-        state.loading = false;
       })
       .addCase(fetchUserChatrooms.rejected, (state, action) => {
         state.error = action.error.message;
-        state.loading = false;
       })
       .addCase(joinChatroom.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(joinChatroom.fulfilled, (state, action) => {
@@ -220,14 +213,11 @@ const chatSlice = createSlice({
         state.chatrooms = state.chatrooms.map((c) =>
           c._id === chatroom._id ? chatroom : c
         );
-        state.loading = false;
       })
       .addCase(joinChatroom.rejected, (state, action) => {
         state.error = action.error.message;
-        state.loading = false;
       })
       .addCase(leaveChatroom.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(leaveChatroom.fulfilled, (state, action) => {
@@ -238,14 +228,12 @@ const chatSlice = createSlice({
         state.chatrooms = state.chatrooms.map((c) =>
           c._id === chatroom._id ? chatroom : c
         );
-        state.loading = false;
       })
       .addCase(leaveChatroom.rejected, (state, action) => {
         state.error = action.error.message;
         state.loading = false;
       })
       .addCase(createChatroom.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(createChatroom.fulfilled, (state, action) => {
@@ -256,27 +244,21 @@ const chatSlice = createSlice({
       })
       .addCase(createChatroom.rejected, (state, action) => {
         state.error = action.error.message;
-        state.loading = false;
       })
       .addCase(fetchChatHistory.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(fetchChatHistory.fulfilled, (state, action) => {
-        state.loading = false;
         const { chatroomId, messages } = action.payload;
         state.messages[chatroomId] = messages;
       })
       .addCase(fetchChatHistory.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.error.message;
       })
       .addCase(fetchMessagesByMembership.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(fetchMessagesByMembership.fulfilled, (state, action) => {
-        state.loading = false;
         const { messagesByChatroom, userId } = action.payload;
         const notifications = {};
 
@@ -298,16 +280,13 @@ const chatSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(sendMessage.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         const message = action.payload;
         state.messages[message.chatroomId].push(message);
-        state.loading = false;
       })
       .addCase(sendMessage.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       })
       .addCase(markMessagesAsSeen.pending, (state) => {
