@@ -16,15 +16,22 @@ require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT;
+const allowedOrigins = [
+  "https://lyric-lounge.vercel.app",
+  "https://lyric-lounge-thapelos-projects-7c628723.vercel.app",
+];
 
 connectDB();
 
 app.use(
   cors({
-    origin: [
-      "https://lyric-lounge.vercel.app",
-      "https://lyric-lounge-thapelos-projects-7c628723.vercel.app",
-    ],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
