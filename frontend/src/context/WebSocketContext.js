@@ -30,7 +30,9 @@ export const WebSocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (token && !socket) {
-      const newSocket = new WebSocket("ws://localhost:5000");
+      const newSocket = new WebSocket(
+        `wss://${process.env.REACT_APP_BACKEND_API_URL}`
+      );
 
       newSocket.onopen = () => {
         newSocket.send(JSON.stringify({ type: "authenticate", token }));
